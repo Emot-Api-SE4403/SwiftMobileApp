@@ -1,0 +1,28 @@
+name: swift_elearning
+description: A new Flutter project.
+publish_to: 'none'
+version: 0.1.0
+
+environment:
+  sdk: '>=2.19.2 <3.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_secure_storage: ^8.0.0
+  google_fonts:
+  http:
+  cupertino_icons: ^1.0.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^2.0.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets\image\intro (1).png
+    - assets\image\intro (2).png
+    - assets\image\intro (3).png
+    - assets\image\SWIFT welcome.png
