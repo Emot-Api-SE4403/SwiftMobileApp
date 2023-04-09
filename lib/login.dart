@@ -22,40 +22,33 @@ class _LoginPageState extends State<LoginPage> {
   final storage = new FlutterSecureStorage();
 
   Future<void> _login() async {
-    var url = Uri.parse(
-        '${const String.fromEnvironment('BACKEND_URL', defaultValue: 'http://10.0.2.2:8000')}/pelajar/login'
+    // Menyimpan login
+    storage.write(key: 'jwt', value: "true");
+
+    //mengubah halaman
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => MyApp()),
     );
-    var data =jsonEncode( {
-      "email": "${_emailController.text}",
-      "password": "${_passwordController.text}"
-    });
-    var response = await http.post(
-        url,
-        headers: {"Content-Type": "application/json"},
-        body: data);
 
-    if (response.statusCode == 200) {
-      var responseBody = json.decode(response.body);
-      var accessToken = responseBody['access_token'];
-      storage.write(key: 'jwt', value: accessToken);
-
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => MyApp()),
-      );
-    } else {
-      var errorResponse = json.decode(response.body);
-      var errorMessage = errorResponse['detail'];
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(errorMessage)),
-      );
-    }
   } 
 
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Container(),
+        backgroundColor: Colors.grey[50],
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          color: Colors.black,
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
+      ),
       body: LayoutBuilder(
         builder: (context, constraints) {
           return Padding(

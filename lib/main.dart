@@ -34,23 +34,13 @@ class _MyAppState extends State<MyApp> {
 
   Future<void> _checkJwt() async {
     final jwt = await widget.storage.read(key: 'jwt');
-    if (jwt != null) {
-      final response = await http.get(
-        Uri.parse(
-          '${const String.fromEnvironment('BACKEND_URL', defaultValue: 'http://10.0.2.2:8000')}/pelajar/mydata'
-          ),
-        headers: {'Authorization': 'Bearer $jwt', 'Content-Type': 'application/json',},
-        
-      );
-      if (response.statusCode == 200) {
-        setState(() {
-          _hasJwt = true;
-        });
-      } else {
-        // JWT is not valid, remove it from the storage
-        await widget.storage.delete(key: 'jwt');
-      }
-    }
+    print(jwt);
+    print(_hasJwt);
+    if( jwt != null ){
+      setState(() {
+        _hasJwt = true;
+      });
+    };
   }
 
 
@@ -61,7 +51,7 @@ class _MyAppState extends State<MyApp> {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: _hasJwt ? ProfilePage(title: '',) : const Intro(),
+      home: _hasJwt ? const ProfilePage(title: '',) : const Intro(),
     );
   }
 }

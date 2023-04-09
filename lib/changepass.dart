@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '/components/AppBar.dart';
+import 'main.dart';
 
+final storage = new FlutterSecureStorage();
+/*
 void main() {
   runApp(const MyApp());
 }
@@ -19,6 +23,7 @@ class MyApp extends StatelessWidget {
     );
   }
 }
+*/
 
 class ChangePassPage extends StatefulWidget {
   const ChangePassPage({super.key, required this.title});
@@ -81,7 +86,15 @@ class _ChangePassPageState extends State<ChangePassPage> {
                                         TextButton(
                                           child: const Text('OK'),
                                           onPressed: () {
-                                            Navigator.of(context).pop();
+                                            setState(() {
+                                              storage.delete(key: "jwt");
+                                              Navigator.push(
+                                              context,
+                                              MaterialPageRoute(builder: (context) => MyApp()),
+                                            );
+                                            });
+                                           
+                                            
                                           },
                                         ),
                                       ],
