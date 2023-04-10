@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:swift_elearning/materi.dart';
 import '/components/AppBar.dart';
 import '/profil.dart';
 
@@ -43,10 +44,7 @@ class _LisTileExampleState extends State<LisTileExample>
               icon: const Icon(Icons.navigate_before),
               tooltip: 'Go to the before page',
               onPressed: () {
-                 Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => MyApp()),
-                );
+                 Navigator.pop(context);
               },
             ),
             ElevatedButton(
@@ -55,7 +53,12 @@ class _LisTileExampleState extends State<LisTileExample>
                 primary: Colors.white,
                 onPrimary: Colors.black,
               ),
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => DaftarMateri()),
+                  );
+              },
               child: const Text(
                 'MATERI',
                 style: TextStyle(fontWeight: FontWeight.bold),
@@ -70,7 +73,12 @@ class _LisTileExampleState extends State<LisTileExample>
                 primary: Colors.grey,
                 onPrimary: Colors.black,
               ),
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => TugasPage()),
+                  );
+              },
               child: const Text(
                 'TUGAS',
                 style: TextStyle(fontWeight: FontWeight.bold),

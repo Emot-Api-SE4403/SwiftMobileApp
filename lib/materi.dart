@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:swift_elearning/changeprofile.dart';
+import 'package:swift_elearning/components/AppBar.dart';
+import 'package:swift_elearning/tugas.dart';
+import 'package:swift_elearning/video.dart';
 
-void main() => runApp(const MyApp());
+void main() => runApp(const DaftarMateri());
 
-class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+class DaftarMateri extends StatelessWidget {
+  const DaftarMateri({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -13,52 +17,7 @@ class MyApp extends StatelessWidget {
         textColor: Colors.white,
       )),
       home: Scaffold(
-        appBar: AppBar(
-          backgroundColor: Colors.grey,
-          title: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'SWIFT',
-                style: TextStyle(
-                    fontSize: 20.0,
-                    color: Colors.black,
-                    fontWeight: FontWeight.bold),
-              ),
-              Text(
-                'E-LEARNING',
-                style: TextStyle(
-                    fontSize: 20.0,
-                    color: Colors.black,
-                    fontWeight: FontWeight.bold),
-              ),
-            ],
-          ),
-          actions: <Widget>[
-            IconButton(
-              color: Colors.black,
-              icon: const Icon(Icons.search),
-              tooltip: 'search',
-              onPressed: () {},
-            ),
-            IconButton(
-              color: Colors.black,
-              icon: const Icon(Icons.notifications),
-              tooltip: 'pemberitahuan',
-              onPressed: () {},
-            ),
-          ],
-          shape: const ContinuousRectangleBorder(
-            borderRadius: BorderRadius.only(
-              bottomLeft: Radius.circular(30),
-              bottomRight: Radius.circular(30),
-            ),
-            side: BorderSide(
-              color: Colors.grey,
-              width: 2,
-            ),
-          ),
-        ),
+        appBar: myAppBar(context),
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
@@ -71,7 +30,9 @@ class MyApp extends StatelessWidget {
                 IconButton(
                   icon: const Icon(Icons.navigate_before),
                   tooltip: 'Go to the before page',
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
                 ),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
@@ -98,7 +59,12 @@ class MyApp extends StatelessWidget {
                       width: 2,
                     ),
                   ),
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => TugasPage()),
+                  );
+                  },
                   child: Text(
                     'TUGAS',
                     style: TextStyle(fontWeight: FontWeight.bold),
@@ -118,6 +84,18 @@ class MyApp extends StatelessWidget {
                       children: <Widget>[
                         ListTile(
                           title: Text('Deskripsi materi ${index + 1}'),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: GestureDetector(
+                            onTap: () => {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => VideoPage()),
+                              )
+                            },
+                            child: Text('Deskripsi materi ${index + 1}'),
+                          ),
                         )
                       ],
                     ),

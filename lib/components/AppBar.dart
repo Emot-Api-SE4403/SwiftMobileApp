@@ -45,10 +45,7 @@ PreferredSizeWidget myAppBar(context) {
               tooltip: 'pemberitahuan',
               onPressed: () {
                 //fungsi jika notifikasi ditekan
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => TugasPage()),
-                );
+                
               },
             ),
           ],

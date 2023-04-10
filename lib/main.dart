@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 
 import 'intro.dart';
 import 'home.dart';
+import 'Dashboard.dart';
 import 'profil.dart';
 
 void main() async {
@@ -34,8 +35,8 @@ class _MyAppState extends State<MyApp> {
 
   Future<void> _checkJwt() async {
     final jwt = await widget.storage.read(key: 'jwt');
-    print(jwt);
-    print(_hasJwt);
+    //print(jwt);
+    //print(_hasJwt);
     if( jwt != null ){
       setState(() {
         _hasJwt = true;
@@ -51,7 +52,7 @@ class _MyAppState extends State<MyApp> {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: _hasJwt ? const ProfilePage(title: '',) : const Intro(),
+      home: _hasJwt ? const DashboardPage() : const Intro(),
     );
   }
 }
