@@ -45,11 +45,7 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
           children: [
             TextButton(
               onPressed: () {
-                Navigator.push(context, MaterialPageRoute<void>(
-                  builder: (BuildContext context) {
-                    return const TugasPage();
-                  },
-                ));
+                Navigator.pop(context);
               },
               child: const Text(
                 '< SEJARAH',
