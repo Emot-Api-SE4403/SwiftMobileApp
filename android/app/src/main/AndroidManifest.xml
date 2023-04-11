@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.swift_elearning">
    <application
-        android:label="swift_elearning"
+        android:label="swift elearning"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
