@@ -13,6 +13,7 @@ dependencies:
   google_fonts:
   http:
   cupertino_icons: ^1.0.2
+  video_player: ^2.6.1
 
 dev_dependencies:
   flutter_test:
@@ -26,3 +27,11 @@ flutter:
     - assets\image\intro (2).png
     - assets\image\intro (3).png
     - assets\image\SWIFT welcome.png
+    - assets\image\profile_picture.jpeg
+    - assets\image\kuantitatif.jpeg
+    - assets\image\kuantitatif.jpeg
+    - assets\image\Penalaran_MTK.jpeg
+    - assets\image\Penalaran_Umum.jpeg
+    - assets\image\Literasi_Indo.jpeg
+    - assets\image\Literasi_Inggris.jpeg
+    - assets\image\KMBDM.jpeg
