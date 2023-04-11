@@ -21,7 +21,7 @@ class _DashboardPageState extends State<DashboardPage> {
       'foto': 'assets\\image\\kuantitatif.jpeg',
     },
     {
-      'nama': 'Penalaran Matematika',
+      'nama': 'Penalaran \nMatematika',
       'foto': 'assets\\image\\Penalaran_MTK.jpeg',
     },
     {
@@ -60,8 +60,8 @@ class _DashboardPageState extends State<DashboardPage> {
       child: Column(
         children: [
           Container(
-            width: 100,
-            height: 100,
+            width: 80,
+            height: 80,
             decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: Colors.grey[300],
@@ -71,7 +71,7 @@ class _DashboardPageState extends State<DashboardPage> {
               child: SizedBox(
                 height: 50,
                 child: Padding(
-                  padding: const EdgeInsets.only(top: 95),
+                  padding: const EdgeInsets.only(top: 90),
                   child: OverflowBox(
                     maxWidth: double.infinity,
                     maxHeight: double.infinity,
@@ -79,7 +79,7 @@ class _DashboardPageState extends State<DashboardPage> {
                       selectedMapel['nama'],
                       textAlign: TextAlign.center,
                       style: const TextStyle(
-                        fontSize: 16,
+                        fontSize: 11,
                         fontWeight: FontWeight.bold,
                         color: Colors.black,
                       ),
@@ -89,7 +89,7 @@ class _DashboardPageState extends State<DashboardPage> {
               ),
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 20),
         ],
       ),
     );
@@ -104,7 +104,8 @@ class _DashboardPageState extends State<DashboardPage> {
         body: Stack(
           children: [
             Container(
-              margin: const EdgeInsets.all(60),
+              margin: EdgeInsets.only(left: 50, right: 50, top: 70, bottom: 50),
+              padding: EdgeInsets.all(15),
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(40),
                   color: const Color.fromARGB(255, 209, 208, 208)),
@@ -115,13 +116,15 @@ class _DashboardPageState extends State<DashboardPage> {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: <Widget>[
                       mapel('Kuantitatif'),
-                      mapel('Penalaran Matematika'),
+                      SizedBox(width: 10),
+                      mapel('Penalaran \nMatematika'),
                     ],
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: <Widget>[
                       mapel('Literasi \nBahasa Inggris'),
+                      SizedBox(width: 10),
                       mapel('Literasi \nBahasa Indonesia'),
                     ],
                   ),
@@ -129,6 +132,7 @@ class _DashboardPageState extends State<DashboardPage> {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: <Widget>[
                       mapel('Penalaran Umum'),
+                      SizedBox(width: 10),
                       mapel('Kemampuan Memahami \nBacaan & Menulis'),
                     ],
                   ),
@@ -136,8 +140,8 @@ class _DashboardPageState extends State<DashboardPage> {
               ),
             ),
             Positioned(
-              top: 20,
-              left: 55,
+              top: 23,
+              left: 45,
               child: Container(
                 width: 90,
                 height: 90,
@@ -174,10 +178,10 @@ class _DashboardPageState extends State<DashboardPage> {
               ),
             ),
             const Positioned(
-              top: 35,
-              left: 150,
+              top: 45,
+              left: 140,
               child: Text(
-                'namaUser',
+                'Mask Aelon',
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
