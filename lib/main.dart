@@ -7,9 +7,7 @@ import 'home.dart';
 import 'Dashboard.dart';
 import 'profil.dart';
 
-void main() async {
-  runApp(MyApp());
-}
+void main() => runApp(new MyApp());
 
 AndroidOptions _getAndroidOptions() => const AndroidOptions(
       encryptedSharedPreferences: true,
