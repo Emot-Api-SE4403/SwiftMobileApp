@@ -21,15 +21,44 @@ class _LoginPageState extends State<LoginPage> {
   // Create storage
   final storage = new FlutterSecureStorage();
 
-  Future<void> _login() async {
-    // Menyimpan login
-    storage.write(key: 'jwt', value: "true");
+  sendMessage(String text) {
+    return SnackBar(content: Text(text));
+  }
 
-    //mengubah halaman
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => MyApp()),
+  Future<void> _login() async {
+    const String url = 'http://127.168.0.4:8000/pelajar/login';
+
+    // The body of the request is usually a JSON object
+    final Map<String, dynamic> requestBody = {
+      'email': _emailController.text,
+      'password': _passwordController.text,
+    };
+
+    // Encode the request body as JSON
+    final String jsonBody = jsonEncode(requestBody);
+
+    // Make the POST request
+    final response = await http.post(
+      Uri.parse(url),
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+      },
+      body: jsonBody,
     );
+
+    final Map<String, dynamic> responseBody = jsonDecode(response.body);
+    // Check if the request was successful
+    if (response.statusCode == 200) {
+      storage.write(key: 'jwt', value: responseBody['access_token']);
+
+      //mengubah halaman
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => MyApp()),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(sendMessage(responseBody['detail']));
+    }
 
   } 
 
