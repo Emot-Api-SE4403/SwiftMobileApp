@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:swift_elearning/login.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+
+
+final storage = new FlutterSecureStorage();
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({Key? key}) : super(key: key);
@@ -17,6 +23,7 @@ class _RegisterPageState extends State<RegisterPage> {
   final _schoolController = TextEditingController();
   String? _selectedMajor;
   bool _userAgreed = false;
+  
 
 
   Widget _buildForm() {
@@ -116,10 +123,7 @@ class _RegisterPageState extends State<RegisterPage> {
               onPressed: () {
                 if (_formKey.currentState?.validate() == true && _userAgreed == true) {
                   _submitForm();
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => LoginPage()),
-                  );
+                  
                 } else {
                   setState(() {
                     _userAgreed = false; // uncheck the box if validation fails
@@ -174,8 +178,78 @@ class _RegisterPageState extends State<RegisterPage> {
     );
   }
 
-  void _submitForm() {
-    // TODO
+  void _submitForm() async {
+    const String url = 'https://proting3-backend.admfirst.my.id/pelajar/register';
+
+    // The body of the request is usually a JSON object
+    final Map<String, dynamic> requestBody = {
+      "email": _emailController.text,
+      "nama_lengkap": _fullNameController.text,
+      "raw_password": _passwordController.text,
+      "asal_sekolah": _schoolController.text,
+      "jurusan": _selectedMajor!
+    };
+
+    // Encode the request body as JSON
+    final String jsonBody = jsonEncode(requestBody);
+
+    // Make the POST request
+    final response = await http.post(
+      Uri.parse(url),
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+      },
+      body: jsonBody,
+    );
+
+    final Map<String, dynamic> responseBody = jsonDecode(response.body);
+    // Check if the request was successful
+    if (response.statusCode == 200) {
+      //mengubah halaman
+      _showMyDialog();
+      
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(responseBody['detail']),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+    
   }
 
+  Future<void> _showMyDialog() async {
+  return showDialog<void>(
+    context: context,
+    barrierDismissible: false, // user must tap button!
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: const Text('Berhasil'),
+        content: SingleChildScrollView(
+          child: ListBody(
+            children: <Widget>[
+              Text('Mohon aktifkan akun anda dengan membuka link yang telah dikirim pada email anda.'),
+            ],
+          ),
+        ),
+        actions: <Widget>[
+          TextButton(
+            child: const Text('Ok'),
+            onPressed: () {
+              Navigator.of(context).pop();
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => LoginPage()),
+              );
+            },
+          ),
+        ],
+      );
+    },
+  );
 }
+
+}
+
+

@@ -26,7 +26,7 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Future<void> _login() async {
-    const String url = 'http://192.168.0.4:8000/pelajar/login';
+    const String url = 'https://proting3-backend.admfirst.my.id/pelajar/login';
 
     // The body of the request is usually a JSON object
     final Map<String, dynamic> requestBody = {
@@ -143,7 +143,7 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   GestureDetector(
                     onTap: () {
-                      print("forget password");
+                      _showResetPasswordDialog();
                     },
                     child: Text(
                       "Lupa password?",
@@ -167,5 +167,65 @@ class _LoginPageState extends State<LoginPage> {
     _emailController.dispose();
     _passwordController.dispose();
     super.dispose();
+  }
+  
+
+   Future _showResetPasswordDialog() async {
+    TextEditingController forgotenEmail = TextEditingController();
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Masukan email anda'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                TextField(
+                  controller: forgotenEmail,
+                  decoration: InputDecoration(
+                    hintText: 'contoh@example.com',
+                    hintStyle: TextStyle(color: Colors.blue),
+                  ),
+                ),
+                Text("Jika email yang anda masukan benar, password anda akan di reset."),
+                Text("Untuk keterangan lebih lanjut, lihat email yang kami kirim")
+
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Submit'),
+              onPressed: () {
+                _reset_pw(forgotenEmail.text);
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+  
+  Future _reset_pw(String text) async {
+    const String url = 'https://proting3-backend.admfirst.my.id/user/resetpassword';
+
+    // The body of the request is usually a JSON object
+    final Map<String, dynamic> requestBody = {
+      'email': text
+    };
+
+    // Encode the request body as JSON
+    final String jsonBody = jsonEncode(requestBody);
+
+    // Make the POST request
+    final response = await http.post(
+      Uri.parse(url),
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+      },
+      body: jsonBody,
+    );
   }
 }
