@@ -20,7 +20,7 @@ class _LoginPageState extends State<LoginPage> {
   final _passwordController = TextEditingController();
 
   // Create storage
-  final storage = new FlutterSecureStorage();
+  final storage = FlutterSecureStorage();
 
   sendMessage(String text) {
     return SnackBar(content: Text(text));

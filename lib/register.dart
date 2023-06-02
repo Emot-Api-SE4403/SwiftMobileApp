@@ -7,7 +7,7 @@ import 'dart:convert';
 import 'components/env.dart';
 
 
-final storage = new FlutterSecureStorage();
+final storage = FlutterSecureStorage();
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({Key? key}) : super(key: key);

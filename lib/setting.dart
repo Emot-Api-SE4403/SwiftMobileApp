@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '/changepass.dart';
 import '/changeprofile.dart';
 import '/components/AppBar.dart';
+import 'main.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(const MyAppp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class MyAppp extends StatelessWidget {
+  const MyAppp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -106,11 +108,38 @@ class _SettingPageState extends State<SettingPage> {
                           },
                         ));
                       },
-                      style: ElevatedButton.styleFrom(
-                        primary: const Color.fromARGB(
-                            255, 217, 17, 17), // ubah warna background button
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all<Color>(
+                            Colors.green[600]!),
+                        foregroundColor: MaterialStateProperty.all<Color>(
+                            Colors.white)
                       ),
                       child: const Text('Ubah Password'),
+                    ),
+                  ),
+                  const SizedBox(height: 16.0),
+                  SizedBox(
+                    width: 300.0, // ubah lebar button Ubah Password
+                    height: 50.0, // ubah tinggi button Ubah Password
+                    child: ElevatedButton(
+                      onPressed: () {
+                        // aksi ketika tombol "Ubah Password" ditekan
+                        final FlutterSecureStorage storage = FlutterSecureStorage();
+                        storage.deleteAll();
+
+                        Navigator.push(context, MaterialPageRoute<void>(
+                          builder: (BuildContext context) {
+                            return MyApp();
+                          },
+                        ));
+                      },
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all<Color>(
+                            Colors.red),
+                        foregroundColor: MaterialStateProperty.all<Color>(
+                            Colors.white)
+                      ),
+                      child: const Text('Log out'),
                     ),
                   ),
                 ],

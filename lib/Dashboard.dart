@@ -1,20 +1,37 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:swift_elearning/components/AppBar.dart';
 import 'package:swift_elearning/materi.dart';
 import 'package:swift_elearning/profil.dart';
 
 
 
-void main() => runApp(const DashboardPage());
+void main() => runApp( DashboardPage());
+
+class MyWidget extends StatefulWidget {
+  const MyWidget({super.key});
+
+  @override
+  State<MyWidget> createState() => _MyWidgetState();
+}
+
+class _MyWidgetState extends State<MyWidget> {
+  @override
+  Widget build(BuildContext context) {
+    return const Placeholder();
+  }
+}
 
 class DashboardPage extends StatefulWidget {
-  const DashboardPage({Key? key}) : super(key: key);
+  DashboardPage({super.key});
 
   @override
   _DashboardPageState createState() => _DashboardPageState();
 }
 
 class _DashboardPageState extends State<DashboardPage> {
+
   List<Map<String, dynamic>> detailMapel = [
     {
       'nama': 'Kuantitatif',
@@ -41,6 +58,22 @@ class _DashboardPageState extends State<DashboardPage> {
       'foto': 'assets\\image\\KMBDM.jpeg',
     },
   ];
+
+  String profilePictureUrl = "https://i.gifer.com/ZKZx.gif";
+  String fullName = "Loading...";
+
+  @override
+  void initState() {
+    super.initState();
+    _retrieveData();
+  }
+
+  Future<void> _retrieveData() async {
+    final storage = FlutterSecureStorage();
+    profilePictureUrl = await storage.read(key: 'profile_picture') ?? 'https://iili.io/HrZtFQs.th.png';
+    fullName = await storage.read(key: 'nama_lengkap') ?? "Error has occured";
+    setState(() {}); // Update the widget's state to trigger a rebuild
+  }  
 
   Widget mapel(String namaMapel) {
     final Map<String, dynamic> selectedMapel = detailMapel.firstWhere(
@@ -97,6 +130,7 @@ class _DashboardPageState extends State<DashboardPage> {
 
   @override
   Widget build(BuildContext context) {
+    
     return MaterialApp(
       title: 'Dashboard',
       home: Scaffold(
@@ -104,8 +138,8 @@ class _DashboardPageState extends State<DashboardPage> {
         body: Stack(
           children: [
             Container(
-              margin: EdgeInsets.only(left: 50, right: 50, top: 70, bottom: 50),
-              padding: EdgeInsets.all(15),
+              margin: const EdgeInsets.only(left: 50, right: 50, top: 70, bottom: 50),
+              padding: const EdgeInsets.all(15),
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(40),
                   color: const Color.fromARGB(255, 209, 208, 208)),
@@ -116,7 +150,7 @@ class _DashboardPageState extends State<DashboardPage> {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: <Widget>[
                       mapel('Kuantitatif'),
-                      SizedBox(width: 10),
+                      const SizedBox(width: 10),
                       mapel('Penalaran \nMatematika'),
                     ],
                   ),
@@ -124,7 +158,7 @@ class _DashboardPageState extends State<DashboardPage> {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: <Widget>[
                       mapel('Literasi \nBahasa Inggris'),
-                      SizedBox(width: 10),
+                      const SizedBox(width: 10),
                       mapel('Literasi \nBahasa Indonesia'),
                     ],
                   ),
@@ -132,7 +166,7 @@ class _DashboardPageState extends State<DashboardPage> {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: <Widget>[
                       mapel('Penalaran Umum'),
-                      SizedBox(width: 10),
+                      const SizedBox(width: 10),
                       mapel('Kemampuan Memahami \nBacaan & Menulis'),
                     ],
                   ),
@@ -157,37 +191,39 @@ class _DashboardPageState extends State<DashboardPage> {
                   onTap: () => {
                     Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => ProfilePage(title: '',)),
+                    MaterialPageRoute(builder: (context) => const ProfilePage(title: '',)),
                   )
                   },
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(10),
-                    child: Container(
+                    child:  Container(
                       width: 80,
                       height: 80,
-                      decoration: const BoxDecoration(
+                      decoration: BoxDecoration(
                         color: Colors.white,
                         shape: BoxShape.circle,
                         image: DecorationImage(
-                          image: AssetImage('assets\\image\\profile_picture.jpeg'),
+                          image: NetworkImage( profilePictureUrl // Get value from secure storage with key = "profile_picture",
+                          )
                         ),
                       ),
-                    ),
+                    )
                   ),
                 ),
               ),
             ),
-            const Positioned(
+            Positioned(
               top: 45,
               left: 140,
               child: Text(
-                'Mask Aelon',
-                style: TextStyle(
+                fullName,
+            // Get value from secure storage with key = "nama_lengkap",
+                style: const TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
                   color: Colors.black,
                 ),
-              ),
+              )
             ),
           ],
         ),
