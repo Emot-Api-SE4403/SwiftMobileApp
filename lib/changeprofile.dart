@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import '/components/AppBar.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(const MyAppChangeProfile());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class MyAppChangeProfile extends StatelessWidget {
+  const MyAppChangeProfile({super.key});
 
   @override
   Widget build(BuildContext context) {

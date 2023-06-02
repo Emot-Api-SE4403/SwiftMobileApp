@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 import 'intro.dart';
 import 'home.dart';
 import 'Dashboard.dart';
 import 'profil.dart';
+import 'components/env.dart';
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Env.instance.load();
   runApp(MyApp());
 }
 
@@ -18,7 +22,7 @@ AndroidOptions _getAndroidOptions() => const AndroidOptions(
 class MyApp extends StatefulWidget {
   MyApp({super.key});
 
-  final storage = FlutterSecureStorage(aOptions: _getAndroidOptions());
+  final storage = FlutterSecureStorage();
 
   @override
   State<MyApp> createState() => _MyAppState();
@@ -35,13 +39,45 @@ class _MyAppState extends State<MyApp> {
 
   Future<void> _checkJwt() async {
     final jwt = await widget.storage.read(key: 'jwt');
-    //print(jwt);
-    //print(_hasJwt);
+
+    // Check if there is jwe
     if( jwt != null ){
       setState(() {
         _hasJwt = true;
       });
     };
+
+    // Check if jwt still valid
+    if( _hasJwt ){
+      String url = "${Env.instance.get("API_URL")!}/pelajar/mydata";
+
+      final response = await http.get(
+        Uri.parse(url),
+        headers: {
+          'Authorization': 'Bearer ${jwt!}'
+        }
+      );
+
+      if( response.statusCode == 200){
+        Map<String, dynamic> map = jsonDecode(response.body);
+        
+
+        map.forEach((key, value) async {
+          if (value is DateTime) {
+            await widget.storage.write(key: key, value: value.toIso8601String());
+          } else {
+            await widget.storage.write(key: key, value: value.toString());
+          }
+          
+        });
+      } else if (response.statusCode == 401) {
+        setState(() {
+          _hasJwt = false;
+          widget.storage.deleteAll();
+        });
+      }
+
+    }
   }
 
 
@@ -52,7 +88,7 @@ class _MyAppState extends State<MyApp> {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: _hasJwt ? const DashboardPage() : const Intro(),
+      home: _hasJwt ? DashboardPage() : const Intro(),
     );
   }
 }

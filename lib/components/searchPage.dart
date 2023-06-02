@@ -9,6 +9,10 @@ class SearchPage extends StatefulWidget {
 
 class _SearchPageState extends State<SearchPage> {
   String _searchQuery = '';
+  
+  Future searchResult() async {
+    
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -19,6 +23,7 @@ class _SearchPageState extends State<SearchPage> {
         backgroundColor: Colors.grey[50],
         title: TextField(
           onChanged: (value) => setState(() => _searchQuery = value),
+          onEditingComplete: () => searchResult(),
           decoration: InputDecoration(
             hintText: 'Search...',
             border: OutlineInputBorder(

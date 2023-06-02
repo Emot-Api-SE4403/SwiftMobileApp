@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
+import 'components/env.dart';
 import 'main.dart';
 
 class LoginPage extends StatefulWidget {
@@ -19,14 +20,14 @@ class _LoginPageState extends State<LoginPage> {
   final _passwordController = TextEditingController();
 
   // Create storage
-  final storage = new FlutterSecureStorage();
+  final storage = FlutterSecureStorage();
 
   sendMessage(String text) {
     return SnackBar(content: Text(text));
   }
 
   Future<void> _login() async {
-    const String url = 'https://proting3-backend.admfirst.my.id/pelajar/login';
+    String url = '${Env.instance.get("API_URL")!}/pelajar/login';
 
     // The body of the request is usually a JSON object
     final Map<String, dynamic> requestBody = {
@@ -197,8 +198,8 @@ class _LoginPageState extends State<LoginPage> {
           actions: <Widget>[
             TextButton(
               child: const Text('Submit'),
-              onPressed: () {
-                _reset_pw(forgotenEmail.text);
+              onPressed: () async {
+                await _reset_pw(forgotenEmail.text);
                 Navigator.of(context).pop();
               },
             ),
@@ -209,23 +210,11 @@ class _LoginPageState extends State<LoginPage> {
   }
   
   Future _reset_pw(String text) async {
-    const String url = 'https://proting3-backend.admfirst.my.id/user/resetpassword';
-
-    // The body of the request is usually a JSON object
-    final Map<String, dynamic> requestBody = {
-      'email': text
-    };
-
-    // Encode the request body as JSON
-    final String jsonBody = jsonEncode(requestBody);
+    String url = '${Env.instance.get("API_URL")!}/user/resetpassword?email=$text';
 
     // Make the POST request
     final response = await http.post(
       Uri.parse(url),
-      headers: <String, String>{
-        'Content-Type': 'application/json',
-      },
-      body: jsonBody,
     );
   }
 }

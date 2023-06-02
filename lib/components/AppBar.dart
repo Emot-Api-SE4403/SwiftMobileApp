@@ -39,15 +39,7 @@ PreferredSizeWidget myAppBar(context) {
                 );
               },
             ),
-            IconButton(
-              color: Colors.black,
-              icon: const Icon(Icons.notifications),
-              tooltip: 'pemberitahuan',
-              onPressed: () {
-                //fungsi jika notifikasi ditekan
-                
-              },
-            ),
+            
           ],
           shape: const ContinuousRectangleBorder(
             borderRadius: BorderRadius.only(
