@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '/components/AppBar.dart';
 import '/setting.dart';
 
@@ -39,210 +40,224 @@ class _ProfilePageState extends State<ProfilePage> {
   bool _isSearching = false;
   bool _showPopup = false;
 
+  String profilePictureUrl = "https://i.gifer.com/ZKZx.gif";
+  String fullName = "Loading...";
+  String jurusan = "Loading...";
+  String asalSekolah = "Loading...";
+  String email = "Loading...";
+  String since = "Loading...";
+
+  @override
+  void initState(){
+    super.initState();
+    _retrieveData();
+  }
+
+  Future<void> _retrieveData() async {
+    final storage = FlutterSecureStorage();
+    profilePictureUrl = await storage.read(key: 'profile_picture') ?? 'https://iili.io/HrZtFQs.th.png';
+    fullName = await storage.read(key: 'nama_lengkap') ?? "Error has occured";
+    jurusan = await storage.read(key: 'jurusan') ?? "Error has occured";
+    asalSekolah = await storage.read(key: 'asal_sekolah') ?? "Error has occured";
+    email = await storage.read(key: 'email') ?? "Error has occured";
+    since = await storage.read(key: 'time_created') ?? "Error has occured";
+    var time = since.split('T');
+    since = time[0];
+    setState(() {}); // Update the widget's state to trigger a rebuild
+  }  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: myAppBar(context),
       body: Stack(
         children: [
-          Positioned.fill(
-            child: Align(
-              alignment: const Alignment(0, -0.45),
-              child: Container(
-                decoration: BoxDecoration(
-                  shape: BoxShape.rectangle,
-                  color: const Color.fromARGB(255, 82, 82, 82),
-                  borderRadius: BorderRadius.circular(30.0),
-                ),
-                width: 350,
-                height: 300,
-                child: Stack(
-                  children: [
-                    Positioned(
-                      top: 16,
-                      right: 16,
-                      child: IconButton(
-                        icon: const Icon(Icons.settings),
-                        onPressed: () {
-                          Navigator.push(context, MaterialPageRoute<void>(
-                            builder: (BuildContext context) {
-                              return const SettingPage(title: '',);
-                            },
-                          ));
-                        },
-                      ),
-                    ),
-                    const Positioned(
-                      top: 80,
-                      left: 80,
-                      child: Text(
-                        'WAWAN SUTAJO',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 24,
-                        ),
-                      ),
-                    ),
-                    const Spacer(),
-                    const Positioned(
-                      top: 120,
-                      left: 20,
-                      child: Text(
-                        'JURUSAN               : SAINTEK',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 14,
-                        ),
-                      ),
-                    ),
-                    const Positioned(
-                      top: 150,
-                      left: 20,
-                      child: Text(
-                        'ASAL SEKOLAH    : SMAN 1 PAPUA BARAT',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 14,
-                        ),
-                      ),
-                    ),
-                    const Positioned(
-                      top: 180,
-                      left: 20,
-                      child: Text(
-                        'EMAIL                     : SutajoW@Gmail.com',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 14,
-                        ),
-                      ),
-                    ),
-                    const Positioned(
-                      top: 210,
-                      left: 20,
-                      child: Text(
-                        'NOMOR HP            : 081234567890',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 14,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+          Align(
+            alignment: const Alignment(0, -0.45),
+            child: Container(
+              decoration: BoxDecoration(
+                shape: BoxShape.rectangle,
+                color: const Color.fromARGB(255, 82, 82, 82),
+                borderRadius: BorderRadius.circular(30.0),
               ),
-            ),
-          ),
-          Positioned.fill(
-            child: Align(
-              alignment: const Alignment(0, -0.85),
-              child: Container(
-                decoration: const BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Color.fromARGB(255, 80, 162, 164),
-                ),
-                width: 150,
-                height: 150,
-              ),
-            ),
-          ),
-          Positioned.fill(
-            child: Align(
-              alignment: const Alignment(0, -0.813),
-              child: Container(
-                decoration: const BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Color.fromARGB(255, 255, 51, 51),
-                ),
-                width: 120,
-                height: 120,
-                child: InkWell(
-                  onTap: () {
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return AlertDialog(
-                          title: const Text("FOTO PROFIL"),
-                          content: const Text("INI FOTO PROFIL ANDA"),
-                          actions: [
-                            TextButton(
-                              onPressed: () {
-                                Navigator.pop(context);
-                              },
-                              child: const Text("OK"),
-                            ),
-                          ],
-                        );
+              width: 350,
+              height: 300,
+              child: Stack(
+                children: [
+                  Positioned(
+                    top: 16,
+                    right: 16,
+                    child: IconButton(
+                      icon: const Icon(Icons.settings),
+                      onPressed: () {
+                        Navigator.push(context, MaterialPageRoute<void>(
+                          builder: (BuildContext context) {
+                            return const SettingPage(title: '',);
+                          },
+                        ));
                       },
-                    );
-                  },
-                  child: const Icon(
-                    Icons.person,
-                    size: 100,
-                    color: Colors.white,
+                    ),
                   ),
-                ),
-              ),
-            ),
-          ),
-          Positioned.fill(
-            child: Align(
-              alignment: const Alignment(0, 0.5),
-              child: Container(
-                decoration: const BoxDecoration(
-                  shape: BoxShape.rectangle,
-                  color: Color.fromARGB(255, 80, 162, 164),
-                ),
-                width: 350,
-                height: 50,
-                child: Row(
-                  children: [
-                    const Text('Riwayat Pembelian'),
-                    Expanded(child: Container()),
-                    InkWell(
-                      onTap: () {
-                        // aksi yang ingin dilakukan ketika tombol diklik
-                      },
-                      child: Ink(
-                        padding: const EdgeInsets.all(16),
-                        child: const Icon(Icons.shopping_cart),
+                  Positioned(
+                    top: 100,
+                    left: 0,
+                    child: Container(
+                      width: 350,
+                      child: Text(
+                      '$fullName',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        overflow: TextOverflow.ellipsis,
+                        color: Colors.white,
+                        fontSize: 24,
                       ),
                     ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-          Positioned.fill(
-            child: Align(
-              alignment: const Alignment(0, 0.5),
-              child: Container(
-                width: 350,
-                height: 50,
-                decoration: const BoxDecoration(
-                  shape: BoxShape.rectangle,
-                  color: Color.fromARGB(255, 80, 162, 164),
-                ),
-                child: Row(
-                  children: [
-                    const Text('Riwayat Pembelian'),
-                    Expanded(child: Container()),
-                    InkWell(
-                      onTap: () {
-                        // aksi yang ingin dilakukan ketika tombol diklik
-                      },
-                      child: Ink(
-                        padding: const EdgeInsets.all(16),
-                        child: const Icon(Icons.shopping_cart),
+                    )
+                  ),
+                  Positioned(
+                    top: 140,
+                    left: 20,
+                    child: Container(
+                      width: 330,
+                      child: Text(
+                      'JURUSAN                    : $jurusan',
+                      style: TextStyle(
+                        overflow: TextOverflow.ellipsis,
+                        color: Colors.white,
+                        fontSize: 14,
                       ),
                     ),
-                  ],
-                ),
+                    )
+                  ),
+                  Positioned(
+                    top: 170,
+                    left: 20,
+                    child: Container(
+                      width: 330,
+                      child: Text(
+                        'ASAL SEKOLAH         : $asalSekolah',
+                        style: TextStyle(
+                          overflow: TextOverflow.ellipsis,
+                          color: Colors.white,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    top: 200,
+                    left: 20,
+                    child: Container(
+                      width: 330,
+                      child: Text(
+                        'EMAIL                          : $email',
+                        style: TextStyle(
+                          overflow: TextOverflow.ellipsis,
+                          color: Colors.white,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    top: 230,
+                    left: 20,
+                    child: Container(
+                      width: 330,
+                      child: Text(
+                        'BERGABUNG SEJAK  : $since',
+                        style: TextStyle(
+                          overflow: TextOverflow.ellipsis,
+                          color: Colors.white,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
+          Align(
+            alignment: const Alignment(0, -0.85),
+            child: Container(
+              decoration: const BoxDecoration(
+                shape: BoxShape.circle,
+                color: Color.fromARGB(255, 80, 162, 164),
+              ),
+              width: 150,
+              height: 150,
+            ),
+          ),
+          Align(
+            alignment: const Alignment(0, -0.813),
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                shape: BoxShape.circle,
+                image: DecorationImage(
+                  image: NetworkImage( profilePictureUrl // Get value from secure storage with key = "profile_picture",
+                  )
+                )
+              ),
+              width: 120,
+              height: 120,
+              child: InkWell(
+                onTap: () {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: const Text("FOTO PROFIL"),
+                        content: const Text("INI FOTO PROFIL ANDA"),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            child: const Text("OK"),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                },
+                
+              ),
+            ),
+          ),
+          /**
+          Align(
+            alignment: const Alignment(0, 0.6),
+            child: Container(
+              width: 350,
+              height: 50,
+              decoration: const BoxDecoration(
+                shape: BoxShape.rectangle,
+                color: Color.fromARGB(255, 80, 162, 164),
+              ),
+              child: Row(
+                children: [
+                  const Text('Riwayat Pembelian'),
+                  Expanded(child: Container()),
+                  InkWell(
+                    onTap: () {
+                      // aksi yang ingin dilakukan ketika tombol diklik
+                    },
+                    child: Ink(
+                      padding: const EdgeInsets.all(16),
+                      child: const Icon(Icons.shopping_cart),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+           */
         ],
       ),
     );
   }
 }
+
+
