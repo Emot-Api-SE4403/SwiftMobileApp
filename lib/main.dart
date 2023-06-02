@@ -6,8 +6,11 @@ import 'intro.dart';
 import 'home.dart';
 import 'Dashboard.dart';
 import 'profil.dart';
+import 'components/env.dart';
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Env.instance.load();
   runApp(MyApp());
 }
 
@@ -35,13 +38,35 @@ class _MyAppState extends State<MyApp> {
 
   Future<void> _checkJwt() async {
     final jwt = await widget.storage.read(key: 'jwt');
-    //print(jwt);
-    //print(_hasJwt);
+
+    // Check if there is jwe
     if( jwt != null ){
       setState(() {
         _hasJwt = true;
       });
     };
+
+    // Check if jwt still valid
+    if( _hasJwt ){
+      String url = "${Env.instance.get("API_URL")!}/pelajar/mydata";
+
+      final response = await http.get(
+        Uri.parse(url),
+        headers: {
+          'Authorization': 'Bearer ${jwt!}'
+        }
+      );
+
+      if( response.statusCode == 200){
+
+      } else {
+        setState(() {
+          _hasJwt = false;
+          widget.storage.delete(key: 'jwt');
+        });
+      }
+
+    }
   }
 
 

@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:swift_elearning/login.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'components/env.dart';
 
 
 final storage = new FlutterSecureStorage();
@@ -179,7 +180,7 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 
   void _submitForm() async {
-    const String url = 'https://proting3-backend.admfirst.my.id/pelajar/register';
+    String url = '${Env.instance.get("API_URL")!}/pelajar/register';
 
     // The body of the request is usually a JSON object
     final Map<String, dynamic> requestBody = {
