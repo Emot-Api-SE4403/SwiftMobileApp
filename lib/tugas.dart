@@ -16,13 +16,16 @@ class TugasPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: myAppBar(context),
-        body: const LisTileExample(),
+        body: LisTileExample(id: 0, namaMapel: 'kuantitatif',),
       );
   }
 }
 
 class LisTileExample extends StatefulWidget {
-  const LisTileExample({super.key});
+  LisTileExample({super.key, required this.id, required this.namaMapel});
+
+  int id;
+  String namaMapel; 
 
   @override
   State<LisTileExample> createState() => _LisTileExampleState();
@@ -56,7 +59,7 @@ class _LisTileExampleState extends State<LisTileExample>
               onPressed: () {
                 Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => DaftarMateri()),
+                    MaterialPageRoute(builder: (context) => DaftarMateri(id: widget.id, nama_mapel: widget.namaMapel,)),
                   );
               },
               child: const Text(

@@ -39,27 +39,32 @@ class _LoginPageState extends State<LoginPage> {
     final String jsonBody = jsonEncode(requestBody);
 
     // Make the POST request
-    final response = await http.post(
-      Uri.parse(url),
-      headers: <String, String>{
-        'Content-Type': 'application/json',
-      },
-      body: jsonBody,
-    );
-
-    final Map<String, dynamic> responseBody = jsonDecode(response.body);
-    // Check if the request was successful
-    if (response.statusCode == 200) {
-      storage.write(key: 'jwt', value: responseBody['access_token']);
-
-      //mengubah halaman
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => MyApp()),
+    try{
+      final response = await http.post(
+        Uri.parse(url),
+        headers: <String, String>{
+          'Content-Type': 'application/json',
+        },
+        body: jsonBody,
       );
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(sendMessage(responseBody['detail']));
+
+      final Map<String, dynamic> responseBody = jsonDecode(response.body);
+      // Check if the request was successful
+      if (response.statusCode == 200) {
+        storage.write(key: 'jwt', value: responseBody['access_token']);
+
+        //mengubah halaman
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => MyApp()),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(sendMessage(responseBody['detail']));
+      }
+    } catch (exc){
+      ScaffoldMessenger.of(context).showSnackBar(sendMessage('Unknown exception: $exc'));
     }
+    
 
   } 
 
