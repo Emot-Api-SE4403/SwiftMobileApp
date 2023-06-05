@@ -36,26 +36,32 @@ class _DashboardPageState extends State<DashboardPage> {
     {
       'nama': 'Kuantitatif',
       'foto': 'assets\\image\\kuantitatif.jpeg',
+      'id': 1
     },
     {
       'nama': 'Penalaran \nMatematika',
       'foto': 'assets\\image\\Penalaran_MTK.jpeg',
+      'id':2
     },
     {
       'nama': 'Penalaran Umum',
       'foto': 'assets\\image\\Penalaran_Umum.jpeg',
+      'id':5
     },
     {
       'nama': 'Literasi \nBahasa Indonesia',
       'foto': 'assets\\image\\Literasi_Indo.jpeg',
+      'id':4
     },
     {
       'nama': 'Literasi \nBahasa Inggris',
       'foto': 'assets\\image\\Literasi_Inggris.jpeg',
+      'id':3
     },
     {
       'nama': 'Kemampuan Memahami \nBacaan & Menulis',
       'foto': 'assets\\image\\KMBDM.jpeg',
+      'id':6
     },
   ];
 
@@ -85,9 +91,14 @@ class _DashboardPageState extends State<DashboardPage> {
         // Action
         
         Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const DaftarMateri()),
-                  );
+          context,
+          MaterialPageRoute(
+            builder: (context) => DaftarMateri(
+              id: selectedMapel['id'], 
+              nama_mapel: selectedMapel['nama'],
+            )
+          ),
+        );
         
       },
       child: Column(
