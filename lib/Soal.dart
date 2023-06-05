@@ -41,15 +41,23 @@ class _SoalDynamicState extends State<SoalDynamic> {
 
   @override
   void initState() {
-    super.initState();
     fetchData();
+    super.initState();
   }
 
-  Future fetchData() async {
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    fetchData();
+    //try to load all your data in this method :)
+
+  }
+
+  Future<void> fetchData() async {
     try {
-      FlutterSecureStorage storage = FlutterSecureStorage();
+      FlutterSecureStorage storage = const FlutterSecureStorage();
       final response = await http.get(
-        Uri.parse("${Env.instance.get("API_URL")}/video/tugas?"),
+        Uri.parse("${Env.instance.get("API_URL")}/video/tugas?id_video=${widget.id_video}"),
         headers: {
           'Authorization': "Bearer ${await storage.read(key: "jwt")}"
         }
@@ -61,10 +69,10 @@ class _SoalDynamicState extends State<SoalDynamic> {
 
       // Convert response body to tugasPembelajaran
       Map<String, dynamic> responseData = json.decode(response.body);
-      tugasPembelajaran = TugasPembelajaran.fromJson(responseData);
-      print(tugasPembelajaran.toString());
-      print("================================================\n");
-      print(responseData);
+      
+      setState(() {
+        tugasPembelajaran = TugasPembelajaran.fromJson(responseData);
+      });
 
     } catch (exc) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -79,12 +87,65 @@ class _SoalDynamicState extends State<SoalDynamic> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: myAppBar(context),
-      body: Column(
-        children: [
-          // TODO 
-        ],
+      appBar: AppBar(
+        title: const Text("Kembali"),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              tugasPembelajaran.judul,
+              style: Theme.of(context).textTheme.displaySmall,
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(
+              height: 50,
+            ),
+            Table(
+              children: [
+                TableRow(
+                  children: [
+                    const Text("Batas pengerjaan"),
+                    Text("${tugasPembelajaran.jumlahAttempt}")
+                  ]
+                ),
+                TableRow(
+                  children: [
+                    const Text("Dibuat pada"),
+                    Text("${tugasPembelajaran.timeCreated}")
+                  ]
+                )
+              ],
+            ),
+            const SizedBox(
+              height: 50,
+            ),
+            TextButton(
+              onPressed: () {}, 
+              style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.all<Color>(
+                            Colors.green[200]!)
+              ),
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 90, vertical: 10),
+                child: Text(
+                  "Mulai",
+                  style: Theme.of(context).textTheme.labelLarge,
+                ),
+              ),
+            )
+          ],
+        ),
       )
     );
   }
 }
+

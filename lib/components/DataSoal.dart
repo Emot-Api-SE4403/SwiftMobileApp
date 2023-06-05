@@ -4,11 +4,13 @@ class TugasPembelajaran {
   String judul;
   int jumlahAttempt;
   List<SoalABC> daftarSoal;
+  DateTime timeCreated;
 
   TugasPembelajaran({
     required this.judul,
     required this.jumlahAttempt,
     required this.daftarSoal,
+    required this.timeCreated
   });
 
   factory TugasPembelajaran.fromJson(Map<String, dynamic> json) {
@@ -21,6 +23,7 @@ class TugasPembelajaran {
       judul: json['judul'],
       jumlahAttempt: json['jumlah_attempt'],
       daftarSoal: daftarSoal,
+      timeCreated: DateTime.parse(json['time_created'])
     );
   }
 }
