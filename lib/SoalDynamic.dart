@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:swift_elearning/MengerjakanSoal.dart';
 import 'package:swift_elearning/components/AppBar.dart';
 import 'package:http/http.dart' as http;
 import 'package:swift_elearning/components/DataSoal.dart';
@@ -129,7 +130,12 @@ class _SoalDynamicState extends State<SoalDynamic> {
               height: 50,
             ),
             TextButton(
-              onPressed: () {}, 
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => MengerjakanSoal(tugasPembelajaran: tugasPembelajaran, noSoal: 0))
+                );
+              }, 
               style: ButtonStyle(
                 backgroundColor: MaterialStateProperty.all<Color>(
                             Colors.green[200]!)

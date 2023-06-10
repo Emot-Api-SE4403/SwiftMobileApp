@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:swift_elearning/Soal.dart';
 import 'package:swift_elearning/components/AppBar.dart';
 import 'package:swift_elearning/components/env.dart';
 import 'package:swift_elearning/soal_sejarah.dart';
 import 'package:video_player/video_player.dart';
+import 'package:swift_elearning/SoalDynamic.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
