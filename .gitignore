@@ -30,7 +30,6 @@
 .pub-cache/
 .pub/
 /build/
-.env
 .test.env
 
 
