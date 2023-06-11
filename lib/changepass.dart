@@ -74,33 +74,40 @@ class _ChangePassPageState extends State<ChangePassPage> {
                             TextButton(
                               child: const Text('YA'),
                               onPressed: () {
-                                Navigator.of(context).pop();
-                                showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return AlertDialog(
-                                      title: const Text('Pemberitahuan'),
-                                      content: const Text(
-                                          'Password Telah Berhasil Diperbaharui.'),
-                                      actions: [
-                                        TextButton(
-                                          child: const Text('OK'),
-                                          onPressed: () {
-                                            setState(() {
-                                              storage.delete(key: "jwt");
-                                              Navigator.push(
-                                              context,
-                                              MaterialPageRoute(builder: (context) => MyApp()),
-                                            );
-                                            });
-                                           
+                                try{
+                                  _apiCallUbahPassword();
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return AlertDialog(
+                                        title: const Text('Pemberitahuan'),
+                                        content: const Text(
+                                            'Password Telah Berhasil Diperbaharui.'),
+                                        actions: [
+                                          TextButton(
+                                            child: const Text('OK'),
+                                            onPressed: () {
+                                              setState(() {
+                                                storage.delete(key: "jwt");
+                                                Navigator.push(
+                                                context,
+                                                MaterialPageRoute(builder: (context) => MyApp()),
+                                              );
+                                              });
                                             
-                                          },
-                                        ),
-                                      ],
-                                    );
-                                  },
-                                );
+                                              
+                                            },
+                                          ),
+                                        ],
+                                      );
+                                    },
+                                  );
+                                }
+                                catch(e){
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(content: Text('error ${e.toString()}')),
+                                  );
+                                }
                               },
                             ),
                             TextButton(
@@ -161,5 +168,9 @@ class _ChangePassPageState extends State<ChangePassPage> {
         ),
       ),
     );
+  }
+  
+  void _apiCallUbahPassword() {
+    throw UnsupportedError("not yet implemented");
   }
 }
