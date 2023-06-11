@@ -88,7 +88,11 @@ class _ProfilePageState extends State<ProfilePage> {
                     top: 16,
                     right: 16,
                     child: IconButton(
-                      icon: const Icon(Icons.settings),
+                      iconSize: 32,
+                      icon: const Icon(
+                        Icons.settings,
+                        color: Colors.white,
+                      ),
                       onPressed: () {
                         Navigator.push(context, MaterialPageRoute<void>(
                           builder: (BuildContext context) {
@@ -97,6 +101,18 @@ class _ProfilePageState extends State<ProfilePage> {
                         ));
                       },
                     ),
+                  ),
+                  Positioned(
+                    top: 16,
+                    left: 16,
+                    child: IconButton(
+                      iconSize: 32,
+                      icon: Icon(
+                        Icons.arrow_back,
+                        color: Colors.grey[50],
+                      ),
+                      onPressed: () => Navigator.popUntil(context, ModalRoute.withName("/")),
+                    )
                   ),
                   Positioned(
                     top: 100,

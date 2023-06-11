@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:swift_elearning/Dashboard.dart';
 import 'package:swift_elearning/changeprofile.dart';
 import 'package:swift_elearning/components/AppBar.dart';
 import 'package:swift_elearning/components/env.dart';
@@ -53,9 +54,8 @@ class _DaftarMateriState extends State<DaftarMateri> {
         }
       );
 
-      print(result.statusCode);
+
       if (result.statusCode == 200) {
-        print(result.body);
         // Parse the JSON response
         final jsonData = json.decode(result.body);
         
@@ -100,9 +100,9 @@ class _DaftarMateriState extends State<DaftarMateri> {
               children: [
                 IconButton(
                   icon: const Icon(Icons.navigate_before),
-                  tooltip: 'Go to the before page',
+                  tooltip: 'Kembali ke dashboard',
                   onPressed: () {
-                    Navigator.pop(context);
+                    Navigator.popUntil(context, ModalRoute.withName("/"));
                   },
                 ),
                 ElevatedButton(
@@ -132,9 +132,9 @@ class _DaftarMateriState extends State<DaftarMateri> {
                   ),
                   onPressed: () {
                     Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => TugasPage()),
-                  );
+                      context,
+                      MaterialPageRoute(builder: (context) => TugasPage(id: widget.id, namaMapel: widget.nama_mapel,)),
+                    );
                   },
                   child: Text(
                     'TUGAS',
@@ -178,33 +178,4 @@ class _DaftarMateriState extends State<DaftarMateri> {
       );
   }
 
-  Widget tempList() {
-    return ListView.builder(
-                  itemBuilder: (BuildContext context, int index) {
-                    return Card(
-                      child: ExpansionTile(
-                        title: Text('Materi ${index + 1}'),
-                        children: <Widget>[
-                          ListTile(
-                            title: Text('Deskripsi materi ${index + 1}'),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(16.0),
-                            child: GestureDetector(
-                              onTap: () => {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(builder: (context) => VideoPage(id:0)),
-                                )
-                              },
-                              child: Text('Deskripsi materi ${index + 1}'),
-                            ),
-                          )
-                        ],
-                      ),
-                    );
-                  },
-                  itemCount: 5, // Replace with actual number of cards
-                );
-  }
 }
