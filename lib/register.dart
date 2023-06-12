@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:swift_elearning/login.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'components/env.dart';
 
 
 final storage = FlutterSecureStorage();
@@ -180,7 +180,7 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 
   void _submitForm() async {
-    String url = '${Env.instance.get("API_URL")!}/pelajar/register';
+    String url = '${dotenv.get("API_URL")}/pelajar/register';
 
     // The body of the request is usually a JSON object
     final Map<String, dynamic> requestBody = {

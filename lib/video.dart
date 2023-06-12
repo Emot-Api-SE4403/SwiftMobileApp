@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:swift_elearning/Soal.dart';
 import 'package:swift_elearning/components/AppBar.dart';
-import 'package:swift_elearning/components/env.dart';
 import 'package:swift_elearning/soal_sejarah.dart';
 import 'package:video_player/video_player.dart';
 import 'package:http/http.dart' as http;
@@ -38,7 +38,7 @@ class _VideoPageState extends State<VideoPage> {
     try {
       FlutterSecureStorage storage = FlutterSecureStorage();
       final response = await http.get(
-        Uri.parse("${Env.instance.get("API_URL")}/video/download?videoid=${widget.id}"),
+        Uri.parse("${dotenv.get("API_URL")}/video/download?videoid=${widget.id}"),
         headers: {
           'Authorization': "Bearer ${await storage.read(key: "jwt")}"
         },

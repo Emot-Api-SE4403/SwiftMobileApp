@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:image_picker/image_picker.dart';
 import '/components/AppBar.dart';
 import '/setting.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(const MyAppProfile());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class MyAppProfile extends StatelessWidget {
+  const MyAppProfile({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -54,7 +55,7 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Future<void> _retrieveData() async {
-    final storage = FlutterSecureStorage();
+    final storage = const FlutterSecureStorage();
     profilePictureUrl = await storage.read(key: 'profile_picture') ?? 'https://iili.io/HrZtFQs.th.png';
     fullName = await storage.read(key: 'nama_lengkap') ?? "Error has occured";
     jurusan = await storage.read(key: 'jurusan') ?? "Error has occured";
@@ -65,6 +66,61 @@ class _ProfilePageState extends State<ProfilePage> {
     since = time[0];
     setState(() {}); // Update the widget's state to trigger a rebuild
   }  
+
+  Future handleInputFoto(bool isSourceCamera) async {
+    final ImagePicker picker = ImagePicker();
+    XFile? image;
+    if (isSourceCamera) {
+      image = await picker.pickImage(source: ImageSource.gallery);
+    } else {
+      image = await picker.pickImage(source: ImageSource.camera);
+    }
+    
+    showDialog(
+      context: context, 
+      builder: (context) {
+        return AlertDialog(
+          title: const Text("Anda yakin memilih foto ini?"),
+          content: Text(image?.name ?? "nama file yang dipilih"),
+          actions: [
+            TextButton(
+              onPressed: () {}, 
+              child: const Text("Yakin")
+            ),
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text("Batal")
+            )
+          ],
+        );
+      }
+    );
+
+    
+  }
+
+  void pilihSumberFoto() {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            ListTile(
+              leading: const Icon(Icons.camera_alt),
+              title: const Text('Ambil Foto dari Kamera'),
+              onTap: () => handleInputFoto(true),
+            ),
+            ListTile(
+              leading: const Icon(Icons.photo),
+              title: const Text('Ambil Foto dari Galeri'),
+              onTap: () => handleInputFoto(false),
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -122,7 +178,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       child: Text(
                       '$fullName',
                       textAlign: TextAlign.center,
-                      style: TextStyle(
+                      style: const TextStyle(
                         overflow: TextOverflow.ellipsis,
                         color: Colors.white,
                         fontSize: 24,
@@ -137,7 +193,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       width: 330,
                       child: Text(
                       'JURUSAN                    : $jurusan',
-                      style: TextStyle(
+                      style: const TextStyle(
                         overflow: TextOverflow.ellipsis,
                         color: Colors.white,
                         fontSize: 14,
@@ -152,7 +208,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       width: 330,
                       child: Text(
                         'ASAL SEKOLAH         : $asalSekolah',
-                        style: TextStyle(
+                        style: const TextStyle(
                           overflow: TextOverflow.ellipsis,
                           color: Colors.white,
                           fontSize: 14,
@@ -167,7 +223,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       width: 330,
                       child: Text(
                         'EMAIL                          : $email',
-                        style: TextStyle(
+                        style: const TextStyle(
                           overflow: TextOverflow.ellipsis,
                           color: Colors.white,
                           fontSize: 14,
@@ -182,7 +238,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       width: 330,
                       child: Text(
                         'BERGABUNG SEJAK  : $since',
-                        style: TextStyle(
+                        style: const TextStyle(
                           overflow: TextOverflow.ellipsis,
                           color: Colors.white,
                           fontSize: 14,
@@ -225,13 +281,20 @@ class _ProfilePageState extends State<ProfilePage> {
                     builder: (BuildContext context) {
                       return AlertDialog(
                         title: const Text("FOTO PROFIL"),
-                        content: const Text("INI FOTO PROFIL ANDA"),
+                        content: const Text("Ganti foto profil?"),
                         actions: [
                           TextButton(
                             onPressed: () {
                               Navigator.pop(context);
+                              pilihSumberFoto();
                             },
-                            child: const Text("OK"),
+                            child: const Text("YA"),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            child: const Text("BATAL"),
                           ),
                         ],
                       );

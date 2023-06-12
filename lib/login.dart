@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-
-import 'components/env.dart';
 import 'main.dart';
 
 class LoginPage extends StatefulWidget {
@@ -27,7 +26,7 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Future<void> _login() async {
-    String url = '${Env.instance.get("API_URL")!}/pelajar/login';
+    String url = '${dotenv.get("API_URL")}/pelajar/login';
 
     // The body of the request is usually a JSON object
     final Map<String, dynamic> requestBody = {
@@ -215,7 +214,7 @@ class _LoginPageState extends State<LoginPage> {
   }
   
   Future _reset_pw(String text) async {
-    String url = '${Env.instance.get("API_URL")!}/user/resetpassword?email=$text';
+    String url = '${dotenv.get("API_URL")}/user/resetpassword?email=$text';
 
     // Make the POST request
     final response = await http.post(

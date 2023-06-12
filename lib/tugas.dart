@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:swift_elearning/Dashboard.dart';
 import 'package:swift_elearning/Soal.dart';
 import 'package:swift_elearning/components/MapelConverter.dart';
-import 'package:swift_elearning/components/env.dart';
 import 'package:swift_elearning/materi.dart';
 import '/components/AppBar.dart';
 import '/profil.dart';
@@ -45,7 +45,7 @@ class _TugasPageState extends State<TugasPage>
     FlutterSecureStorage storage = FlutterSecureStorage();
     try{
       final result = await http.get(
-        Uri.parse("${Env.instance.get("API_URL")}/materi/tugas/list?mapel=${MapelConverter.fromInt(widget.id)}"),
+        Uri.parse("${dotenv.get("API_URL")}/materi/tugas/list?mapel=${MapelConverter.fromInt(widget.id)}"),
         headers: {
           "Authorization": "Bearer ${await storage.read(key: "jwt")}"
         }

@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-
-import 'package:swift_elearning/components/env.dart';
 import 'package:swift_elearning/components/mapelConverter.dart';
 import 'package:swift_elearning/video.dart';
 
@@ -22,7 +21,7 @@ class _SearchPageState extends State<SearchPage> {
     try {
       const FlutterSecureStorage storage = FlutterSecureStorage();
       var judul = Uri.encodeComponent(_searchQuery);
-      var url = "${Env.instance.get("API_URL")}/video/list?judul=$judul";
+      var url = "${dotenv.get("API_URL")}/video/list?judul=$judul";
       var result = await http.get(
         Uri.parse(url),
         headers: {

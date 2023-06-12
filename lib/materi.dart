@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:swift_elearning/Dashboard.dart';
 import 'package:swift_elearning/changeprofile.dart';
 import 'package:swift_elearning/components/AppBar.dart';
-import 'package:swift_elearning/components/env.dart';
 import 'package:swift_elearning/tugas.dart';
 import 'package:swift_elearning/video.dart';
 import 'package:http/http.dart' as http;
@@ -48,7 +48,7 @@ class _DaftarMateriState extends State<DaftarMateri> {
     FlutterSecureStorage storage = FlutterSecureStorage();
     try{
       final result = await http.get(
-        Uri.parse("${Env.instance.get("API_URL")}/materi/list?id_mapel=${widget.id}"),
+        Uri.parse("${dotenv.get("API_URL")}/materi/list?id_mapel=${widget.id}"),
         headers: {
           "Authorization": "Bearer ${await storage.read(key: "jwt")}"
         }
