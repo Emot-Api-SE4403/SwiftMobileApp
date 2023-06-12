@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:swift_elearning/Dashboard.dart';
 import 'package:swift_elearning/Soal.dart';
+import 'package:swift_elearning/components/MapelConverter.dart';
 import 'package:swift_elearning/components/env.dart';
 import 'package:swift_elearning/materi.dart';
 import '/components/AppBar.dart';
@@ -40,30 +41,11 @@ class _TugasPageState extends State<TugasPage>
     with TickerProviderStateMixin {
   List<Map<String, dynamic>> data = [];
 
-  String mapelConvert(int input) {
-    switch (input) {
-      case 1:
-        return 'kuantitatif';
-      case 2:
-        return 'penalaran_matematika';
-      case 3:
-        return 'literasi_inggris';
-      case 4:
-        return 'literasi_indonesia';
-      case 5:
-        return 'penalaran_umum';
-      case 6:
-        return 'membaca_dan_menulis';
-      default:
-        throw Exception('Invalid input');
-    }
-  }
-
   Future _fetchData() async {
     FlutterSecureStorage storage = FlutterSecureStorage();
     try{
       final result = await http.get(
-        Uri.parse("${Env.instance.get("API_URL")}/materi/tugas/list?mapel=${mapelConvert(widget.id)}"),
+        Uri.parse("${Env.instance.get("API_URL")}/materi/tugas/list?mapel=${MapelConverter.fromInt(widget.id)}"),
         headers: {
           "Authorization": "Bearer ${await storage.read(key: "jwt")}"
         }

@@ -1,4 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+
+import 'package:swift_elearning/components/env.dart';
+import 'package:swift_elearning/components/mapelConverter.dart';
+import 'package:swift_elearning/video.dart';
 
 class SearchPage extends StatefulWidget {
   const SearchPage({Key? key}) : super(key: key);
@@ -9,9 +16,38 @@ class SearchPage extends StatefulWidget {
 
 class _SearchPageState extends State<SearchPage> {
   String _searchQuery = '';
+  List<Map<String, dynamic>> data = [];
   
   Future searchResult() async {
-    
+    try {
+      const FlutterSecureStorage storage = FlutterSecureStorage();
+      var judul = Uri.encodeComponent(_searchQuery);
+      var url = "${Env.instance.get("API_URL")}/video/list?judul=$judul";
+      var result = await http.get(
+        Uri.parse(url),
+        headers: {
+          "Authorization": "Bearer ${await storage.read(key: "jwt")}"
+        }
+      );
+
+      if(result.statusCode != 200){
+        throw Exception("Error ${result.statusCode}, ${result.body.toString()}");
+      }
+      print(result.body);
+      data = List<Map<String, dynamic>>.from(jsonDecode(result.body));
+      setState(() {
+        
+      });
+
+    } catch (e) {
+      print(e.toString());
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(e.toString()),
+          backgroundColor: Colors.red,
+        )
+      );
+    }
   }
 
   @override
@@ -23,7 +59,7 @@ class _SearchPageState extends State<SearchPage> {
         backgroundColor: Colors.grey[50],
         title: TextField(
           onChanged: (value) => setState(() => _searchQuery = value),
-          onEditingComplete: () => searchResult(),
+          onSubmitted: (value) => searchResult(),
           decoration: InputDecoration(
             hintText: 'Search...',
             border: OutlineInputBorder(
@@ -42,8 +78,28 @@ class _SearchPageState extends State<SearchPage> {
           ),
         ],
       ),
-      body: Center(
-        child: Text('Search results for: $_searchQuery'),
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text('Search results for: $_searchQuery'),
+          ),
+          Expanded(
+            child: ListView.builder(
+              itemCount: data.length, 
+              itemBuilder: (context, i) {
+                return ListTile(
+                  title: Text(data[i]['judul']), 
+                  subtitle: Text("${data[i]['materi']['nama']}, ${MapelConverter.fromInt(data[i]['materi']['mapel'])}".replaceAll("_", " ")),
+                  onTap: () => Navigator.push(
+                    context, 
+                    MaterialPageRoute(builder: (context) => VideoPage(id: data[i]['id'])),
+                  ),
+                );
+              }
+            ),
+          )
+        ]
       ),
     );
   }
