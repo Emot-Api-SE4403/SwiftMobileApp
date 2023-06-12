@@ -217,7 +217,7 @@ class _LoginPageState extends State<LoginPage> {
     String url = '${dotenv.get("API_URL")}/user/resetpassword?email=$text';
 
     // Make the POST request
-    final response = await http.post(
+    await http.post(
       Uri.parse(url),
     );
   }

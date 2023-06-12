@@ -37,9 +37,6 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  double _appBarHeight = 100.0;
-  bool _isSearching = false;
-  bool _showPopup = false;
 
   String profilePictureUrl = "https://i.gifer.com/ZKZx.gif";
   String fullName = "Loading...";
@@ -71,11 +68,15 @@ class _ProfilePageState extends State<ProfilePage> {
     final ImagePicker picker = ImagePicker();
     XFile? image;
     if (isSourceCamera) {
-      image = await picker.pickImage(source: ImageSource.gallery);
-    } else {
       image = await picker.pickImage(source: ImageSource.camera);
+    } else {
+      image = await picker.pickImage(source: ImageSource.gallery);
     }
     
+    if (image == null) {
+      Navigator.of(context).pop();
+      return;
+    } 
     showDialog(
       context: context, 
       builder: (context) {
@@ -173,7 +174,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   Positioned(
                     top: 100,
                     left: 0,
-                    child: Container(
+                    child: SizedBox(
                       width: 350,
                       child: Text(
                       '$fullName',
@@ -189,7 +190,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   Positioned(
                     top: 140,
                     left: 20,
-                    child: Container(
+                    child: SizedBox(
                       width: 330,
                       child: Text(
                       'JURUSAN                    : $jurusan',
@@ -204,7 +205,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   Positioned(
                     top: 170,
                     left: 20,
-                    child: Container(
+                    child: SizedBox(
                       width: 330,
                       child: Text(
                         'ASAL SEKOLAH         : $asalSekolah',
@@ -219,7 +220,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   Positioned(
                     top: 200,
                     left: 20,
-                    child: Container(
+                    child: SizedBox(
                       width: 330,
                       child: Text(
                         'EMAIL                          : $email',
@@ -234,7 +235,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   Positioned(
                     top: 230,
                     left: 20,
-                    child: Container(
+                    child: SizedBox(
                       width: 330,
                       child: Text(
                         'BERGABUNG SEJAK  : $since',

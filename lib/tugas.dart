@@ -1,17 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:swift_elearning/Dashboard.dart';
 import 'package:swift_elearning/Soal.dart';
 import 'package:swift_elearning/components/MapelConverter.dart';
 import 'package:swift_elearning/materi.dart';
 import '/components/AppBar.dart';
-import '/profil.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-import 'soal_biologi.dart';
-import 'soal_sejarah.dart';
 
 
 void main() => runApp(const TugasPageDebug());
@@ -42,7 +38,7 @@ class _TugasPageState extends State<TugasPage>
   List<Map<String, dynamic>> data = [];
 
   Future _fetchData() async {
-    FlutterSecureStorage storage = FlutterSecureStorage();
+    FlutterSecureStorage storage = const FlutterSecureStorage();
     try{
       final result = await http.get(
         Uri.parse("${dotenv.get("API_URL")}/materi/tugas/list?mapel=${MapelConverter.fromInt(widget.id)}"),
@@ -163,8 +159,8 @@ class _TugasPageState extends State<TugasPage>
               ),
             ),
             subtitle:  Text(
-              '${widget.namaMapel}'.replaceAll("\n", " "),
-              style: TextStyle(color: Colors.black),
+              widget.namaMapel.replaceAll("\n", " "),
+              style: const TextStyle(color: Colors.black),
             ),
             trailing: Text("${data[i]['time_created'].replaceAll("T", "\n")}"),
             tileColor: Colors.grey,
