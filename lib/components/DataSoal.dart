@@ -1,36 +1,48 @@
-
-
 class TugasPembelajaran {
   String judul;
   int jumlahAttempt;
-  List<SoalABC> daftarSoal;
+  List<Soal> daftarSoal;
   DateTime timeCreated;
 
   TugasPembelajaran({
     required this.judul,
     required this.jumlahAttempt,
     required this.daftarSoal,
-    required this.timeCreated
+    required this.timeCreated,
   });
 
   factory TugasPembelajaran.fromJson(Map<String, dynamic> json) {
-    List<SoalABC> daftarSoal = [];
+    List<Soal> daftarSoal = [];
     if (json['daftar_soal'] != null) {
-      daftarSoal = List<SoalABC>.from(json['daftar_soal'].map((x) => SoalABC.fromJson(x)));
+      daftarSoal = List<Soal>.from(json['daftar_soal'].map((x) => _parseSoal(x)));
     }
 
     return TugasPembelajaran(
       judul: json['judul'],
       jumlahAttempt: json['jumlah_attempt'],
       daftarSoal: daftarSoal,
-      timeCreated: DateTime.parse(json['time_created'])
+      timeCreated: DateTime.parse(json['time_created']),
     );
+  }
+
+  static Soal _parseSoal(Map<String, dynamic> json) {
+    if (json['pilihan'] != null) {
+      return SoalMultiPilih.fromJson(json);
+    } else if (json['pernyataan_pada_benar'] != null && json['pernyataan_pada_salah'] != null) {
+      return SoalBenarSalah.fromJson(json);
+    } else {
+      return SoalABC.fromJson(json);
+    }
   }
 }
 
-class SoalMultiPilih {
-  String pertanyaan;
+abstract class Soal {
+  
+}
+
+class SoalMultiPilih extends Soal {
   List<JawabanMultiPilih> pilihan;
+  String pertanyaan;
 
   SoalMultiPilih({
     required this.pertanyaan,
@@ -64,10 +76,10 @@ class JawabanMultiPilih {
   }
 }
 
-class SoalBenarSalah {
-  String pertanyaan;
+class SoalBenarSalah extends Soal {
   String pernyataanPadaBenar;
   String pernyataanPadaSalah;
+  String pertanyaan;
   List<JawabanBenarSalah> daftarJawaban;
 
   SoalBenarSalah({
@@ -106,9 +118,9 @@ class JawabanBenarSalah {
   }
 }
 
-class SoalABC {
-  String pertanyaan;
+class SoalABC extends Soal {
   List<String> pilihanJawaban;
+  String pertanyaan;
 
   SoalABC({
     required this.pertanyaan,

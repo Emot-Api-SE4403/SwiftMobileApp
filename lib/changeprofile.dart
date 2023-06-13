@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:swift_elearning/components/Loading.dart';
-import 'package:swift_elearning/main.dart';
-import 'package:swift_elearning/profil.dart';
+import '/components/Loading.dart';
+import '/main.dart';
+import '/profil.dart';
 import '/components/AppBar.dart';
 import 'package:http/http.dart' as http;
 

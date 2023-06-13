@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:swift_elearning/components/AppBar.dart';
-import 'package:swift_elearning/tugas.dart';
-import 'package:swift_elearning/video.dart';
+import '/components/AppBar.dart';
+import '/tugas.dart';
+import '/video.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 

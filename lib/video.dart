@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:swift_elearning/Soal.dart';
 import 'package:video_player/video_player.dart';
+import '/SoalDynamic.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
