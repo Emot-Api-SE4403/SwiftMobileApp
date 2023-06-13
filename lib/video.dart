@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:swift_elearning/Soal.dart';
-import 'package:swift_elearning/components/AppBar.dart';
-import 'package:swift_elearning/components/env.dart';
-import 'package:swift_elearning/soal_sejarah.dart';
 import 'package:video_player/video_player.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -36,9 +34,9 @@ class _VideoPageState extends State<VideoPage> {
 
   Future<void> fetchData() async {
     try {
-      FlutterSecureStorage storage = FlutterSecureStorage();
+      FlutterSecureStorage storage = const FlutterSecureStorage();
       final response = await http.get(
-        Uri.parse("${Env.instance.get("API_URL")}/video/download?videoid=${widget.id}"),
+        Uri.parse("${dotenv.get("API_URL")}/video/download?videoid=${widget.id}"),
         headers: {
           'Authorization': "Bearer ${await storage.read(key: "jwt")}"
         },
@@ -76,9 +74,9 @@ class _VideoPageState extends State<VideoPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Kembali"),
+        title: const Text("Kembali"),
         leading: IconButton(
-          icon: Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back),
           onPressed: () {
             Navigator.pop(context);
           },
@@ -87,7 +85,7 @@ class _VideoPageState extends State<VideoPage> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(height: 10),
+          const SizedBox(height: 10),
           AspectRatio(
             aspectRatio: 16 / 9,
             child: Container(
@@ -110,17 +108,17 @@ class _VideoPageState extends State<VideoPage> {
                   } else if (snapshot.hasError) {
                     return Center(child: Text('Error: ${snapshot.error}'));
                   } else {
-                    return Center(child: CircularProgressIndicator());
+                    return const Center(child: CircularProgressIndicator());
                   }
                 },
               ),
             ),
           ),
-          SizedBox(height: 10),
+          const SizedBox(height: 10),
           SizedBox(
             width: double.infinity,
             child: Container(
-              padding: EdgeInsets.all(8.0),
+              padding: const EdgeInsets.all(8.0),
               child: Text(
                 '${data['metadata']['judul']}',
                 style: Theme.of(context).textTheme.headlineSmall,
@@ -130,7 +128,7 @@ class _VideoPageState extends State<VideoPage> {
           SizedBox(
             width: double.infinity,
             child: Container(
-              padding: EdgeInsets.all(8.0),
+              padding: const EdgeInsets.all(8.0),
               child: Text(
                 'Di upload pada   :${data['metadata']['time_created']}',
                 style: Theme.of(context).textTheme.bodyMedium,
@@ -147,17 +145,17 @@ class _VideoPageState extends State<VideoPage> {
                   MaterialPageRoute(builder: (context) => SoalDynamic(id_video: data['metadata']['id'])),
                 );
               },
-              child: Text('KUIS'),
               style: ElevatedButton.styleFrom(
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20),
                 ),
                 primary: Colors.red,
-                padding: EdgeInsets.symmetric(vertical: 16),
+                padding: const EdgeInsets.symmetric(vertical: 16),
               ),
+              child: const Text('KUIS'),
             ),
           ),
-          SizedBox(height: 10,)
+          const SizedBox(height: 10,)
         ],
       ),
     );

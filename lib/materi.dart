@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:swift_elearning/Dashboard.dart';
-import 'package:swift_elearning/changeprofile.dart';
 import 'package:swift_elearning/components/AppBar.dart';
-import 'package:swift_elearning/components/env.dart';
 import 'package:swift_elearning/tugas.dart';
 import 'package:swift_elearning/video.dart';
 import 'package:http/http.dart' as http;
@@ -45,10 +43,10 @@ class _DaftarMateriState extends State<DaftarMateri> {
   }
 
   Future fetchData() async {
-    FlutterSecureStorage storage = FlutterSecureStorage();
+    FlutterSecureStorage storage = const FlutterSecureStorage();
     try{
       final result = await http.get(
-        Uri.parse("${Env.instance.get("API_URL")}/materi/list?id_mapel=${widget.id}"),
+        Uri.parse("${dotenv.get("API_URL")}/materi/list?id_mapel=${widget.id}"),
         headers: {
           "Authorization": "Bearer ${await storage.read(key: "jwt")}"
         }
@@ -91,7 +89,7 @@ class _DaftarMateriState extends State<DaftarMateri> {
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            SizedBox(
+            const SizedBox(
               height: 10,
             ),
             Row(
@@ -112,12 +110,12 @@ class _DaftarMateriState extends State<DaftarMateri> {
                     onPrimary: Colors.black,
                   ),
                   onPressed: () {},
-                  child: Text(
+                  child: const Text(
                     'MATERI',
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   width: 20,
                 ),
                 ElevatedButton(
@@ -125,7 +123,7 @@ class _DaftarMateriState extends State<DaftarMateri> {
                     fixedSize: const Size(150, 30),
                     primary: Colors.white,
                     onPrimary: Colors.black,
-                    side: BorderSide(
+                    side: const BorderSide(
                       color: Colors.grey,
                       width: 2,
                     ),
@@ -136,14 +134,14 @@ class _DaftarMateriState extends State<DaftarMateri> {
                       MaterialPageRoute(builder: (context) => TugasPage(id: widget.id, namaMapel: widget.nama_mapel,)),
                     );
                   },
-                  child: Text(
+                  child: const Text(
                     'TUGAS',
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
                 )
               ],
             ),
-            SizedBox(
+            const SizedBox(
               height: 15,
             ),
             Expanded(child: Container(
