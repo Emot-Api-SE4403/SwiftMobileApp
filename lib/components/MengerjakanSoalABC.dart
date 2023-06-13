@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:swift_elearning/MengerjakanSoal.dart';
-import 'package:swift_elearning/components/DataSoal.dart';
+import '../MengerjakanSoal.dart';
+import 'DataSoal.dart';
 
 class MengerjakanTugasABC extends StatefulWidget {
   const MengerjakanTugasABC({

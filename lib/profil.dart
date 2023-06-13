@@ -5,8 +5,8 @@ import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mime/mime.dart';
-import 'package:swift_elearning/components/Loading.dart';
-import 'package:swift_elearning/main.dart';
+import '/components/Loading.dart';
+import '/main.dart';
 import '/components/AppBar.dart';
 import '/setting.dart';
 

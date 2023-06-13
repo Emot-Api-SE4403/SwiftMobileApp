@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
-import 'package:swift_elearning/components/DataSoal.dart';
-import 'package:swift_elearning/components/MengerjakanSoalABC.dart';
+import '/components/DataSoal.dart';
+import '/components/MengerjakanSoalABC.dart';
 
 
 
