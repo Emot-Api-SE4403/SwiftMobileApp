@@ -42,6 +42,6 @@ jobs:
         with:
           prerelease: true
           artifacts: "build/app/outputs/apk/debug/*.apk"
-          token: ${{ secrets.GITHUB_TOKEN_DEPLOY }}
+          token: ${{ secrets.TOKEN_DEPLOY }}
 
 
