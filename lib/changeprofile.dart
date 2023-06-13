@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:swift_elearning/components/Loading.dart';
 import 'package:swift_elearning/main.dart';
 import 'package:swift_elearning/profil.dart';
 import '/components/AppBar.dart';
@@ -57,6 +58,7 @@ class _ChangeProfilePageState extends State<ChangeProfilePage> {
   
   Future sendData() async {
     try {
+      LoadingDialog.show(context);
       var nama = namaController.text;
       var email = emailController.text;
       var asalSekolah = asalSekolahController.text;
@@ -87,6 +89,7 @@ class _ChangeProfilePageState extends State<ChangeProfilePage> {
         },
         body: profile
       );
+      LoadingDialog.hide(context);
 
       if (response.statusCode != 200) {
         throw Exception(response.body);

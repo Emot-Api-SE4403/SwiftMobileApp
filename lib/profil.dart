@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:http/http.dart' as http;
+import 'package:http_parser/http_parser.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:mime/mime.dart';
+import 'package:swift_elearning/components/Loading.dart';
+import 'package:swift_elearning/main.dart';
 import '/components/AppBar.dart';
 import '/setting.dart';
 
@@ -28,6 +34,7 @@ class ProfilePage extends StatefulWidget {
 
   final String title;
   final double _appBarHeight = 100.0;
+  final FlutterSecureStorage storage = const FlutterSecureStorage();
 
   @override
   Size get preferredSize => Size.fromHeight(_appBarHeight);
@@ -64,19 +71,51 @@ class _ProfilePageState extends State<ProfilePage> {
     setState(() {}); // Update the widget's state to trigger a rebuild
   }  
 
+  Future<void> updateProfilePicture(XFile imageFile) async {
+    LoadingDialog.show(context);
+
+    var url = Uri.parse('${dotenv.get("API_URL")}/pelajar/updateprofilepicture');
+    var request = http.MultipartRequest('POST', url);
+    
+    request.headers['Authorization'] = 'Bearer ${await widget.storage.read(key: "jwt")}';
+    
+    var image = await http.MultipartFile.fromPath(
+      'file', 
+      imageFile.path, 
+      contentType: MediaType.parse(lookupMimeType(imageFile.name) ?? "application/octet-stream")
+    );
+    request.files.add(image);
+    
+    var response = await request.send();
+    var responseBody = await response.stream.bytesToString();
+    
+    LoadingDialog.hide(context);
+    if (response.statusCode == 200) {
+      showDialogBerhasil();
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(backgroundColor: Colors.red,content: Text("Error ${response.statusCode}: $responseBody"))
+      );
+    }
+  }
+
   Future handleInputFoto(bool isSourceCamera) async {
     final ImagePicker picker = ImagePicker();
     XFile? image;
     if (isSourceCamera) {
-      image = await picker.pickImage(source: ImageSource.camera);
+      image = await picker.pickImage(source: ImageSource.camera, requestFullMetadata: true);
     } else {
-      image = await picker.pickImage(source: ImageSource.gallery);
+      image = await picker.pickImage(source: ImageSource.gallery, requestFullMetadata: true);
     }
     
-    if (image == null) {
-      Navigator.of(context).pop();
-      return;
+    Navigator.of(context).pop();
+    if (image != null) {
+      showDialogYakin(image);
     } 
+    
+  }
+
+  void showDialogYakin(image) {
     showDialog(
       context: context, 
       builder: (context) {
@@ -85,7 +124,10 @@ class _ProfilePageState extends State<ProfilePage> {
           content: Text(image?.name ?? "nama file yang dipilih"),
           actions: [
             TextButton(
-              onPressed: () {}, 
+              onPressed: () {
+                Navigator.of(context).pop();
+                updateProfilePicture(image);
+              }, 
               child: const Text("Yakin")
             ),
             TextButton(
@@ -96,8 +138,29 @@ class _ProfilePageState extends State<ProfilePage> {
         );
       }
     );
+  }
 
-    
+  void showDialogBerhasil(){
+    showDialog(
+      context: context, 
+      builder: (context) {
+        return AlertDialog(
+          title: const Text("Berhasil"),
+          actions: [
+            TextButton(
+              onPressed: () { 
+                Navigator.pop(context);
+                Navigator.pop(context);
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (context) => MyApp()),
+                );
+              },
+              child: const Text("OK")
+            )
+          ],
+        );
+      }
+    );
   }
 
   void pilihSumberFoto() {
