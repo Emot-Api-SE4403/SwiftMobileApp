@@ -41,34 +41,30 @@ class _MyAppState extends State<MyApp> {
     final jwt = await widget.storage.read(key: 'jwt');
 
     // Check if there is jwe
-    if( jwt != null ){
+    if (jwt != null) {
       setState(() {
         _hasJwt = true;
       });
-    };
+    }
+    ;
 
     // Check if jwt still valid
-    if( _hasJwt ){
+    if (_hasJwt) {
       String url = "${Env.instance.get("API_URL")!}/pelajar/mydata";
 
-      final response = await http.get(
-        Uri.parse(url),
-        headers: {
-          'Authorization': 'Bearer ${jwt!}'
-        }
-      );
+      final response = await http
+          .get(Uri.parse(url), headers: {'Authorization': 'Bearer ${jwt!}'});
 
-      if( response.statusCode == 200){
+      if (response.statusCode == 200) {
         Map<String, dynamic> map = jsonDecode(response.body);
-        
 
         map.forEach((key, value) async {
           if (value is DateTime) {
-            await widget.storage.write(key: key, value: value.toIso8601String());
+            await widget.storage
+                .write(key: key, value: value.toIso8601String());
           } else {
             await widget.storage.write(key: key, value: value.toString());
           }
-          
         });
       } else if (response.statusCode == 401) {
         setState(() {
@@ -76,10 +72,8 @@ class _MyAppState extends State<MyApp> {
           widget.storage.deleteAll();
         });
       }
-
     }
   }
-
 
   @override
   Widget build(BuildContext context) {

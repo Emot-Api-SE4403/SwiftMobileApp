@@ -36,7 +36,6 @@ class SoalDynamic extends StatefulWidget {
   State<SoalDynamic> createState() => _SoalDynamicState();
 }
 
-
 class _SoalDynamicState extends State<SoalDynamic> {
   late TugasPembelajaran tugasPembelajaran;
 
@@ -51,30 +50,28 @@ class _SoalDynamicState extends State<SoalDynamic> {
     super.didChangeDependencies();
     fetchData();
     //try to load all your data in this method :)
-
   }
 
   Future<void> fetchData() async {
     try {
       FlutterSecureStorage storage = const FlutterSecureStorage();
       final response = await http.get(
-        Uri.parse("${Env.instance.get("API_URL")}/video/tugas?id_video=${widget.id_video}"),
-        headers: {
-          'Authorization': "Bearer ${await storage.read(key: "jwt")}"
-        }
-      );
+          Uri.parse(
+              "${Env.instance.get("API_URL")}/video/tugas?id_video=${widget.id_video}"),
+          headers: {
+            'Authorization': "Bearer ${await storage.read(key: "jwt")}"
+          });
 
-      if(response.statusCode != 200){
+      if (response.statusCode != 200) {
         throw Exception(response.body);
       }
 
       // Convert response body to tugasPembelajaran
       Map<String, dynamic> responseData = json.decode(response.body);
-      
+
       setState(() {
         tugasPembelajaran = TugasPembelajaran.fromJson(responseData);
       });
-
     } catch (exc) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -88,70 +85,69 @@ class _SoalDynamicState extends State<SoalDynamic> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Kembali"),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.pop(context);
-          },
+        appBar: AppBar(
+          title: const Text("Kembali"),
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
         ),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              tugasPembelajaran.judul,
-              style: Theme.of(context).textTheme.displaySmall,
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(
-              height: 50,
-            ),
-            Table(
-              children: [
-                TableRow(
-                  children: [
-                    const Text("Batas pengerjaan"),
+        body: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                tugasPembelajaran.judul,
+                style: TextStyle(
+                  fontSize: 20, // Ukuran teks (misalnya 18)
+                  color: Colors.black, // Warna teks (misalnya biru)
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(
+                height: 50,
+              ),
+              Table(
+                children: [
+                  TableRow(children: [
+                    const Text("Upaya diperbolehkan:"),
                     Text("${tugasPembelajaran.jumlahAttempt}")
-                  ]
-                ),
-                TableRow(
-                  children: [
-                    const Text("Dibuat pada"),
+                  ]),
+                  TableRow(children: [
+                    const Text("Dibuat pada:"),
                     Text("${tugasPembelajaran.timeCreated}")
-                  ]
-                )
-              ],
-            ),
-            const SizedBox(
-              height: 50,
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => MengerjakanSoal(tugasPembelajaran: tugasPembelajaran, noSoal: 0))
-                );
-              }, 
-              style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all<Color>(
-                            Colors.green[200]!)
+                  ])
+                ],
               ),
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 90, vertical: 10),
-                child: Text(
-                  "Mulai",
-                  style: Theme.of(context).textTheme.labelLarge,
+              const SizedBox(
+                height: 50,
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => MengerjakanSoal(
+                              tugasPembelajaran: tugasPembelajaran,
+                              noSoal: 0)));
+                },
+                style: ButtonStyle(
+                    backgroundColor:
+                        MaterialStateProperty.all<Color>(Colors.blue)),
+                child: Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 90, vertical: 10),
+                  child: Text(
+                    "Mulai",
+                    style: Theme.of(context).textTheme.labelLarge,
+                  ),
                 ),
-              ),
-            )
-          ],
-        ),
-      )
-    );
+              )
+            ],
+          ),
+        ));
   }
 }
-

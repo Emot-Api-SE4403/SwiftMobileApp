@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:swift_elearning/MengerjakanSoal.dart';
 import 'package:swift_elearning/components/DataSoal.dart';
 
 class MengerjakanTugasABC extends StatefulWidget {
-  const MengerjakanTugasABC({super.key, required this.tugasPembelajaran, required this.no});
+  const MengerjakanTugasABC({
+    Key? key,
+    required this.tugasPembelajaran,
+    required this.no,
+  }) : super(key: key);
 
   final TugasPembelajaran tugasPembelajaran;
   final int no;
@@ -15,55 +17,95 @@ class MengerjakanTugasABC extends StatefulWidget {
 }
 
 class _MengerjakanTugasABCState extends State<MengerjakanTugasABC> {
-  
+  int selectedAnswer = -1; // Menyimpan jawaban yang dipilih
+
   @override
   Widget build(BuildContext context) {
     SoalABC soal = widget.tugasPembelajaran.daftarSoal[widget.no] as SoalABC;
-    return Center(
-      child: Container(
-        color: Colors.blueGrey[50],
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              soal.pertanyaan,
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-            Text(
-              soal.pilihanJawaban[0],
-              style: Theme.of(context).textTheme.bodyMedium,
-            ),
-            Text(soal.pilihanJawaban[1]),
-            Text(soal.pilihanJawaban[2]),
-            Text(soal.pilihanJawaban[3]),
-            TextButton(onPressed: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => MengerjakanSoal(
-                    tugasPembelajaran: widget.tugasPembelajaran, 
-                    noSoal: widget.no + 1
-                  )
-                )
-              );
-            }, child: Text(
-              "Next",
-              
-            )),
-            TextButton(onPressed: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => MengerjakanSoal(
-                    tugasPembelajaran: widget.tugasPembelajaran, 
-                    noSoal: widget.no - 1
-                  )
-                )
-              );
-            }, child: Text(
-              "Before",
-              
-            ))
-
-          ],
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("Kembali"),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+      ),
+      body: Center(
+        child: Container(
+          color: Colors.blueGrey[50],
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                '${widget.no + 1}. ${soal.pertanyaan}',
+                style: Theme.of(context).textTheme.headline6,
+              ),
+              SizedBox(height: 16),
+              Column(
+                children: List.generate(
+                  soal.pilihanJawaban.length,
+                  (index) => RadioListTile<int>(
+                    value: index,
+                    groupValue: selectedAnswer,
+                    onChanged: (value) {
+                      setState(() {
+                        selectedAnswer = value as int;
+                      });
+                    },
+                    title: Text(
+                      '${String.fromCharCode(65 + index)}. ${soal.pilihanJawaban[index]}',
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: () {
+                  // Logika untuk mengirim jawaban ke server atau melakukan pengecekan jawaban
+                  // Anda dapat menambahkan logika Anda sendiri di sini
+                },
+                child: Text('Submit'),
+              ),
+              SizedBox(height: 16),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.navigate_before),
+                    tooltip: 'Go to the previous page',
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => MengerjakanSoal(
+                            tugasPembelajaran: widget.tugasPembelajaran,
+                            noSoal: widget.no - 1,
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.navigate_next),
+                    tooltip: 'Go to the next page',
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => MengerjakanSoal(
+                            tugasPembelajaran: widget.tugasPembelajaran,
+                            noSoal: widget.no + 1,
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
