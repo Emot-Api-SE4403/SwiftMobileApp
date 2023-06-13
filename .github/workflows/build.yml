@@ -7,7 +7,8 @@ name: Build APK
 
 on:
   push:
-    branches: [ "main" ]
+    tags:
+      - '*'
 
 jobs:
   build:
@@ -31,11 +32,16 @@ jobs:
       - run: flutter pub get
       
       - run: flutter build apk --debug --split-per-abi
+
+      - name: Extract tag name
+        id: extract_tag
+        run: echo "::set-output name=tag_name::${GITHUB_REF#refs/tags/}"
       
       - name: Create Release
         uses: ncipollo/release-action@v1.12.0
         with:
           prerelease: true
+          tag: ${{ steps.extract_tag.outputs.tag_name }}
           artifacts: "build/app/outputs/apk/debug/*.apk"
 
 
