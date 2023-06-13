@@ -1,7 +1,12 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:swift_elearning/components/Loading.dart';
 import '/components/AppBar.dart';
 import 'main.dart';
+import 'package:http/http.dart' as http;
 
 final storage = new FlutterSecureStorage();
 /*
@@ -39,8 +44,36 @@ class ChangePassPage extends StatefulWidget {
 }
 
 class _ChangePassPageState extends State<ChangePassPage> {
-  double _appBarHeight = 100.0;
-  bool _isSearching = false;
+  TextEditingController oldPassword = new TextEditingController();
+  TextEditingController newPassword = new TextEditingController();
+  TextEditingController confirmPassword = new TextEditingController();
+
+  void showDialogBerhasil () {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Pemberitahuan'),
+          content: const Text(
+              'Password Telah Berhasil Diperbaharui.'),
+          actions: [
+            TextButton(
+              child: const Text('OK'),
+              onPressed: () {
+                setState(() {
+                  storage.delete(key: "jwt");
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => MyApp()),
+                  );
+                });
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -73,35 +106,7 @@ class _ChangePassPageState extends State<ChangePassPage> {
                           actions: [
                             TextButton(
                               child: const Text('YA'),
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                                showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return AlertDialog(
-                                      title: const Text('Pemberitahuan'),
-                                      content: const Text(
-                                          'Password Telah Berhasil Diperbaharui.'),
-                                      actions: [
-                                        TextButton(
-                                          child: const Text('OK'),
-                                          onPressed: () {
-                                            setState(() {
-                                              storage.delete(key: "jwt");
-                                              Navigator.push(
-                                              context,
-                                              MaterialPageRoute(builder: (context) => MyApp()),
-                                            );
-                                            });
-                                           
-                                            
-                                          },
-                                        ),
-                                      ],
-                                    );
-                                  },
-                                );
-                              },
+                              onPressed: () => apiCallUbahPassword()
                             ),
                             TextButton(
                               child: const Text('TIDAK'),
@@ -137,18 +142,21 @@ class _ChangePassPageState extends State<ChangePassPage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     TextFormField(
+                      controller: oldPassword,
                       decoration: const InputDecoration(
                         labelText: 'MASUKKAN PASSWORD LAMA*',
                       ),
                     ),
                     const SizedBox(height: 16.0),
                     TextFormField(
+                      controller: newPassword,
                       decoration: const InputDecoration(
                         labelText: 'MASUKKAN PASSWORD BARU*',
                       ),
                     ),
                     const SizedBox(height: 16.0),
                     TextFormField(
+                      controller: confirmPassword,
                       decoration: const InputDecoration(
                         labelText: 'KONFIRMASI PASSWORD BARU*',
                       ),
@@ -161,5 +169,46 @@ class _ChangePassPageState extends State<ChangePassPage> {
         ),
       ),
     );
+  }
+  
+  Future<void> apiCallUbahPassword() async {
+    try {
+      if(newPassword.text != confirmPassword.text ){
+        throw Exception("konfirmasi password tidak sesuai");
+      }
+      if(newPassword.text.length < 8 ){
+        throw Exception("password harus minimal 8 karakter");
+      }
+
+      LoadingDialog.show(context);
+      var body = {
+          "email": await storage.read(key: "email"),
+          "password": oldPassword.text,
+          "new_password": newPassword.text,
+        };
+      var response = await http.post(
+        Uri.parse("${dotenv.get("API_URL")}/user/newpassword"),
+        body: jsonEncode(body),
+        headers: {
+          "Content-Type": "application/json",
+        }
+      );
+
+      LoadingDialog.hide(context);
+      if(response.statusCode == 200){
+        showDialogBerhasil();
+      } else {
+        var responseBody = jsonDecode(response.body);
+        throw Exception("${response.statusCode}: ${responseBody['detail']}");
+      }
+    } catch (e) {
+      Navigator.pop(context);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: Colors.red,
+          content: Text(e.toString())
+        ),
+      );
+    }
   }
 }

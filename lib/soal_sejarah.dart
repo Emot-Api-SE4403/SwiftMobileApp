@@ -127,7 +127,7 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
             onPressed: () {
               Navigator.push(context, MaterialPageRoute<void>(
                 builder: (BuildContext context) {
-                  return const TugasPage();
+                  return const TugasPageDebug();
                 },
               ));
             },
@@ -142,7 +142,7 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
               onPressed: () {
                 Navigator.push(context, MaterialPageRoute<void>(
                   builder: (BuildContext context) {
-                    return const TugasPage();
+                    return const TugasPageDebug();
                   },
                 ));
               },

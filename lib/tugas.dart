@@ -1,145 +1,179 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:swift_elearning/Soal.dart';
+import 'package:swift_elearning/components/MapelConverter.dart';
 import 'package:swift_elearning/materi.dart';
 import '/components/AppBar.dart';
-import '/profil.dart';
-
-import 'soal_biologi.dart';
-import 'soal_sejarah.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 
-void main() => runApp(const TugasPage());
 
-class TugasPage extends StatelessWidget {
-  const TugasPage({super.key});
+void main() => runApp(const TugasPageDebug());
+
+class TugasPageDebug extends StatelessWidget {
+  const TugasPageDebug({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: myAppBar(context),
-        body: LisTileExample(id: 0, namaMapel: 'kuantitatif',),
-      );
+    return MaterialApp(
+      home: TugasPage(id: 1, namaMapel: 'kuantitatif',),
+    );
   }
 }
 
-class LisTileExample extends StatefulWidget {
-  LisTileExample({super.key, required this.id, required this.namaMapel});
+class TugasPage extends StatefulWidget {
+  TugasPage({super.key, required this.id, required this.namaMapel});
 
   int id;
   String namaMapel; 
 
   @override
-  State<LisTileExample> createState() => _LisTileExampleState();
+  State<TugasPage> createState() => _TugasPageState();
 }
 
-class _LisTileExampleState extends State<LisTileExample>
+class _TugasPageState extends State<TugasPage>
     with TickerProviderStateMixin {
+  List<Map<String, dynamic>> data = [];
+
+  Future _fetchData() async {
+    FlutterSecureStorage storage = const FlutterSecureStorage();
+    try{
+      final result = await http.get(
+        Uri.parse("${dotenv.get("API_URL")}/materi/tugas/list?mapel=${MapelConverter.fromInt(widget.id)}"),
+        headers: {
+          "Authorization": "Bearer ${await storage.read(key: "jwt")}"
+        }
+      );
+
+      if (result.statusCode == 200) {
+        // Parse the JSON response
+        final jsonData = json.decode(result.body);
+        
+        // Clear the existing dataMateri list
+        data.clear();
+
+        // Iterate over the parsed JSON and add it to dataMateri list
+        for (var item in jsonData) {
+          data.add(item as Map<String, dynamic>);
+        }
+
+        // Refresh the page
+        setState(() {});
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('error ${result.statusCode}, ${result.body}')),
+        );
+      }
+    } catch (exc) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: Colors.redAccent ,
+          content: Text('Unknown exception: $exc')
+        )
+      );
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchData();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: <Widget>[
-        const SizedBox(
-          height: 10,
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            IconButton(
-              icon: const Icon(Icons.navigate_before),
-              tooltip: 'Go to the before page',
-              onPressed: () {
-                 Navigator.pop(context);
-              },
+    return Scaffold(
+      appBar: myAppBar(context),
+      body: Column(
+        children: <Widget>[
+          const SizedBox(
+            height: 10,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              IconButton(
+                icon: const Icon(Icons.navigate_before),
+                tooltip: 'Kembali ke Dashboard',
+                onPressed: () {
+                   Navigator.popUntil(context, ModalRoute.withName("/"));
+                },
+              ),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  fixedSize: const Size(150, 30),
+                  primary: Colors.white,
+                  onPrimary: Colors.black,
+                ),
+                onPressed: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => DaftarMateri(id: widget.id, nama_mapel: widget.namaMapel,)),
+                    );
+                },
+                child: const Text(
+                  'MATERI',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+              ),
+              const SizedBox(
+                width: 20,
+              ),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  fixedSize: const Size(150, 30),
+                  primary: Colors.grey,
+                  onPrimary: Colors.black,
+                ),
+                onPressed: () {},
+                child: const Text(
+                  'TUGAS',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+              )
+            ],
+          ),
+          const SizedBox(
+            height: 15,
+          ),
+          Expanded(child: ListView.builder(itemCount: data.length, itemBuilder: HeroBuilder))
+        ],
+      ),
+    );
+  }
+
+
+  Widget HeroBuilder(context, i){
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 5.0),
+      child: Hero(
+        tag: 'ListTile-Hero-${i+1}',
+        child: Material(
+          child: ListTile(
+            title: Text(
+              '${data[i]['judul']}',
+              style: Theme.of(context).textTheme.headlineSmall?.apply(
+                fontSizeDelta: -4
+              ),
             ),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                fixedSize: const Size(150, 30),
-                primary: Colors.white,
-                onPrimary: Colors.black,
-              ),
-              onPressed: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => DaftarMateri(id: widget.id, nama_mapel: widget.namaMapel,)),
-                  );
-              },
-              child: const Text(
-                'MATERI',
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
+            subtitle:  Text(
+              widget.namaMapel.replaceAll("\n", " "),
+              style: const TextStyle(color: Colors.black),
             ),
-            const SizedBox(
-              width: 20,
-            ),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                fixedSize: const Size(150, 30),
-                primary: Colors.grey,
-                onPrimary: Colors.black,
-              ),
-              onPressed: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => TugasPage()),
-                  );
-              },
-              child: const Text(
-                'TUGAS',
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-            )
-          ],
-        ),
-        const SizedBox(
-          height: 15,
-        ),
-        Hero(
-          tag: 'ListTile-Hero-1',
-          // Wrap the ListTile in a Material widget so the ListTile has someplace
-          // to draw the animated colors during the hero transition.
-          child: Material(
-            child: ListTile(
-              title: const Text('Sejarah'),
-              subtitle: const Text(
-                'Indonesia',
-                style: TextStyle(color: Colors.black),
-              ),
-              tileColor: Colors.grey,
-              onTap: () {
-                Navigator.push(context, MaterialPageRoute<void>(
-                  builder: (BuildContext context) {
-                    return const soal_sejarah();
-                  },
-                ));
-              },
-            ),
+            trailing: Text("${data[i]['time_created'].replaceAll("T", "\n")}"),
+            tileColor: Colors.grey,
+            onTap: () {
+              Navigator.push(context, MaterialPageRoute<void>(
+                builder: (BuildContext context) {
+                  return SoalDynamic(id_video: data[i]['video']['id']);
+                },
+              ));
+            },
           ),
         ),
-        const SizedBox(
-          height: 10,
-        ),
-        Hero(
-          tag: 'ListTile-Hero-2',
-          // Wrap the ListTile in a Material widget so the ListTile has someplace
-          // to draw the animated colors during the hero transition.
-          child: Material(
-            child: ListTile(
-              title: const Text('Biologi'),
-              subtitle: const Text(
-                'Hewan',
-                style: TextStyle(color: Colors.black),
-              ),
-              tileColor: Colors.grey,
-              onTap: () {
-                Navigator.push(context, MaterialPageRoute<void>(
-                  builder: (BuildContext context) {
-                    return const soal_biologi();
-                  },
-                ));
-              },
-            ),
-          ),
-        ),
-      ],
+      ),
     );
   }
 }

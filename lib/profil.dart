@@ -1,14 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:http/http.dart' as http;
+import 'package:http_parser/http_parser.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:mime/mime.dart';
+import 'package:swift_elearning/components/Loading.dart';
+import 'package:swift_elearning/main.dart';
 import '/components/AppBar.dart';
 import '/setting.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(const MyAppProfile());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class MyAppProfile extends StatelessWidget {
+  const MyAppProfile({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -27,6 +34,7 @@ class ProfilePage extends StatefulWidget {
 
   final String title;
   final double _appBarHeight = 100.0;
+  final FlutterSecureStorage storage = const FlutterSecureStorage();
 
   @override
   Size get preferredSize => Size.fromHeight(_appBarHeight);
@@ -36,9 +44,6 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  double _appBarHeight = 100.0;
-  bool _isSearching = false;
-  bool _showPopup = false;
 
   String profilePictureUrl = "https://i.gifer.com/ZKZx.gif";
   String fullName = "Loading...";
@@ -54,7 +59,7 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Future<void> _retrieveData() async {
-    final storage = FlutterSecureStorage();
+    final storage = const FlutterSecureStorage();
     profilePictureUrl = await storage.read(key: 'profile_picture') ?? 'https://iili.io/HrZtFQs.th.png';
     fullName = await storage.read(key: 'nama_lengkap') ?? "Error has occured";
     jurusan = await storage.read(key: 'jurusan') ?? "Error has occured";
@@ -65,6 +70,121 @@ class _ProfilePageState extends State<ProfilePage> {
     since = time[0];
     setState(() {}); // Update the widget's state to trigger a rebuild
   }  
+
+  Future<void> updateProfilePicture(XFile imageFile) async {
+    LoadingDialog.show(context);
+
+    var url = Uri.parse('${dotenv.get("API_URL")}/pelajar/updateprofilepicture');
+    var request = http.MultipartRequest('POST', url);
+    
+    request.headers['Authorization'] = 'Bearer ${await widget.storage.read(key: "jwt")}';
+    
+    var image = await http.MultipartFile.fromPath(
+      'file', 
+      imageFile.path, 
+      contentType: MediaType.parse(lookupMimeType(imageFile.name) ?? "application/octet-stream")
+    );
+    request.files.add(image);
+    
+    var response = await request.send();
+    var responseBody = await response.stream.bytesToString();
+    
+    LoadingDialog.hide(context);
+    if (response.statusCode == 200) {
+      showDialogBerhasil();
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(backgroundColor: Colors.red,content: Text("Error ${response.statusCode}: $responseBody"))
+      );
+    }
+  }
+
+  Future handleInputFoto(bool isSourceCamera) async {
+    final ImagePicker picker = ImagePicker();
+    XFile? image;
+    if (isSourceCamera) {
+      image = await picker.pickImage(source: ImageSource.camera, requestFullMetadata: true);
+    } else {
+      image = await picker.pickImage(source: ImageSource.gallery, requestFullMetadata: true);
+    }
+    
+    Navigator.of(context).pop();
+    if (image != null) {
+      showDialogYakin(image);
+    } 
+    
+  }
+
+  void showDialogYakin(image) {
+    showDialog(
+      context: context, 
+      builder: (context) {
+        return AlertDialog(
+          title: const Text("Anda yakin memilih foto ini?"),
+          content: Text(image?.name ?? "nama file yang dipilih"),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                updateProfilePicture(image);
+              }, 
+              child: const Text("Yakin")
+            ),
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text("Batal")
+            )
+          ],
+        );
+      }
+    );
+  }
+
+  void showDialogBerhasil(){
+    showDialog(
+      context: context, 
+      builder: (context) {
+        return AlertDialog(
+          title: const Text("Berhasil"),
+          actions: [
+            TextButton(
+              onPressed: () { 
+                Navigator.pop(context);
+                Navigator.pop(context);
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (context) => MyApp()),
+                );
+              },
+              child: const Text("OK")
+            )
+          ],
+        );
+      }
+    );
+  }
+
+  void pilihSumberFoto() {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            ListTile(
+              leading: const Icon(Icons.camera_alt),
+              title: const Text('Ambil Foto dari Kamera'),
+              onTap: () => handleInputFoto(true),
+            ),
+            ListTile(
+              leading: const Icon(Icons.photo),
+              title: const Text('Ambil Foto dari Galeri'),
+              onTap: () => handleInputFoto(false),
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -88,7 +208,11 @@ class _ProfilePageState extends State<ProfilePage> {
                     top: 16,
                     right: 16,
                     child: IconButton(
-                      icon: const Icon(Icons.settings),
+                      iconSize: 32,
+                      icon: const Icon(
+                        Icons.settings,
+                        color: Colors.white,
+                      ),
                       onPressed: () {
                         Navigator.push(context, MaterialPageRoute<void>(
                           builder: (BuildContext context) {
@@ -99,14 +223,26 @@ class _ProfilePageState extends State<ProfilePage> {
                     ),
                   ),
                   Positioned(
+                    top: 16,
+                    left: 16,
+                    child: IconButton(
+                      iconSize: 32,
+                      icon: Icon(
+                        Icons.arrow_back,
+                        color: Colors.grey[50],
+                      ),
+                      onPressed: () => Navigator.popUntil(context, ModalRoute.withName("/")),
+                    )
+                  ),
+                  Positioned(
                     top: 100,
                     left: 0,
-                    child: Container(
+                    child: SizedBox(
                       width: 350,
                       child: Text(
                       '$fullName',
                       textAlign: TextAlign.center,
-                      style: TextStyle(
+                      style: const TextStyle(
                         overflow: TextOverflow.ellipsis,
                         color: Colors.white,
                         fontSize: 24,
@@ -117,11 +253,11 @@ class _ProfilePageState extends State<ProfilePage> {
                   Positioned(
                     top: 140,
                     left: 20,
-                    child: Container(
+                    child: SizedBox(
                       width: 330,
                       child: Text(
                       'JURUSAN                    : $jurusan',
-                      style: TextStyle(
+                      style: const TextStyle(
                         overflow: TextOverflow.ellipsis,
                         color: Colors.white,
                         fontSize: 14,
@@ -132,11 +268,11 @@ class _ProfilePageState extends State<ProfilePage> {
                   Positioned(
                     top: 170,
                     left: 20,
-                    child: Container(
+                    child: SizedBox(
                       width: 330,
                       child: Text(
                         'ASAL SEKOLAH         : $asalSekolah',
-                        style: TextStyle(
+                        style: const TextStyle(
                           overflow: TextOverflow.ellipsis,
                           color: Colors.white,
                           fontSize: 14,
@@ -147,11 +283,11 @@ class _ProfilePageState extends State<ProfilePage> {
                   Positioned(
                     top: 200,
                     left: 20,
-                    child: Container(
+                    child: SizedBox(
                       width: 330,
                       child: Text(
                         'EMAIL                          : $email',
-                        style: TextStyle(
+                        style: const TextStyle(
                           overflow: TextOverflow.ellipsis,
                           color: Colors.white,
                           fontSize: 14,
@@ -162,11 +298,11 @@ class _ProfilePageState extends State<ProfilePage> {
                   Positioned(
                     top: 230,
                     left: 20,
-                    child: Container(
+                    child: SizedBox(
                       width: 330,
                       child: Text(
                         'BERGABUNG SEJAK  : $since',
-                        style: TextStyle(
+                        style: const TextStyle(
                           overflow: TextOverflow.ellipsis,
                           color: Colors.white,
                           fontSize: 14,
@@ -209,13 +345,20 @@ class _ProfilePageState extends State<ProfilePage> {
                     builder: (BuildContext context) {
                       return AlertDialog(
                         title: const Text("FOTO PROFIL"),
-                        content: const Text("INI FOTO PROFIL ANDA"),
+                        content: const Text("Ganti foto profil?"),
                         actions: [
                           TextButton(
                             onPressed: () {
                               Navigator.pop(context);
+                              pilihSumberFoto();
                             },
-                            child: const Text("OK"),
+                            child: const Text("YA"),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            child: const Text("BATAL"),
                           ),
                         ],
                       );

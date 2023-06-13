@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'dart:convert';
 
 import 'intro.dart';
 import 'home.dart';
 import 'Dashboard.dart';
 import 'profil.dart';
-import 'components/env.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Env.instance.load();
+  await dotenv.load(fileName: ".env");
   runApp(MyApp());
 }
 
@@ -49,8 +49,8 @@ class _MyAppState extends State<MyApp> {
     ;
 
     // Check if jwt still valid
-    if (_hasJwt) {
-      String url = "${Env.instance.get("API_URL")!}/pelajar/mydata";
+    if( _hasJwt ){
+      String url = "${dotenv.get("API_URL")}/pelajar/mydata";
 
       final response = await http
           .get(Uri.parse(url), headers: {'Authorization': 'Bearer ${jwt!}'});
