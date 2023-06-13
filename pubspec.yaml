@@ -27,15 +27,15 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   assets:
-    - assets/image/intro (1).png
-    - assets/image/intro (2).png
-    - assets/image/intro (3).png
-    - assets/image/SWIFT welcome.png
-    - assets/image/profile_picture.jpeg
-    - assets/image/Kuantitatif.jpeg
-    - assets/image/Penalaran_MTK.jpeg
-    - assets/image/Penalaran_Umum.jpeg
-    - assets/image/Literasi_Indo.jpeg
-    - assets/image/Literasi_Inggris.jpeg
-    - assets/image/KMBDM.jpeg
+    - assets\image\intro (1).png
+    - assets\image\intro (2).png
+    - assets\image\intro (3).png
+    - assets\image\SWIFT welcome.png
+    - assets\image\profile_picture.jpeg
+    - assets\image\Kuantitatif.jpeg
+    - assets\image\Penalaran_MTK.jpeg
+    - assets\image\Penalaran_Umum.jpeg
+    - assets\image\Literasi_Indo.jpeg
+    - assets\image\Literasi_Inggris.jpeg
+    - assets\image\KMBDM.jpeg
     - .env
