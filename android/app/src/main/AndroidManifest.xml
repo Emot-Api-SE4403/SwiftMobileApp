@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="id.my.admfirst.swift_elearning">
+    package="com.example.swift_elearning">
     <uses-permission android:name="android.permission.INTERNET"/>
 
    <application
