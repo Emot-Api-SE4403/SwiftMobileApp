@@ -142,7 +142,7 @@ class _VideoPageState extends State<VideoPage> {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => SoalDynamic(id_video: data['metadata']['id'])),
+                  MaterialPageRoute(builder: (context) => SoalDynamic(id_video: data['metadata']['id'], id_tugas: data['metadata']['id_tugas'],)),
                 );
               },
               style: ElevatedButton.styleFrom(
