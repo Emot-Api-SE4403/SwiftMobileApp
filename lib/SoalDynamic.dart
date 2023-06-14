@@ -28,33 +28,26 @@ class MyHomeApp extends StatelessWidget {
 }
 
 class SoalDynamic extends StatefulWidget {
-  SoalDynamic({super.key, required this.id_video});
+  SoalDynamic({super.key, required this.id_video, this.id_tugas});
 
   int id_video;
+  int? id_tugas;
 
   @override
   State<SoalDynamic> createState() => _SoalDynamicState();
 }
 
 class _SoalDynamicState extends State<SoalDynamic> {
-  late TugasPembelajaran tugasPembelajaran;
+  TugasPembelajaran tugasPembelajaran = TugasPembelajaran.placeholder;
+  List<Map<String, dynamic>> listAttempts = [];
 
   @override
   void initState() {
     fetchData();
     super.initState();
   }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    fetchData();
-    //try to load all your data in this method :)
-  }
-
-  Future<void> fetchData() async {
-    try {
-      FlutterSecureStorage storage = const FlutterSecureStorage();
+  Future apiCallTugas() async {
+    FlutterSecureStorage storage = const FlutterSecureStorage();
       final response = await http.get(
           Uri.parse(
               "${dotenv.get("API_URL")}/video/tugas?id_video=${widget.id_video}"),
@@ -67,10 +60,36 @@ class _SoalDynamicState extends State<SoalDynamic> {
       }
 
       // Convert response body to tugasPembelajaran
-      Map<String, dynamic> responseData = json.decode(response.body);
+      Map<String, dynamic> responseDataTugas = json.decode(response.body);
+      return responseDataTugas;
+  }
 
+  Future apiCallAttempts() async {
+    FlutterSecureStorage storage = const FlutterSecureStorage();
+    var url = "${dotenv.get("API_URL")}/video/tugas/nilai?id_tugas=${widget.id_tugas}&id_pelajar=${await storage.read(key:"id")}";
+    print(url);
+    final responseattempt = await http.get(
+          Uri.parse(url),
+          headers: {
+            'Authorization': "Bearer ${await storage.read(key: "jwt")}"
+          });
+
+      if (responseattempt.statusCode != 200) {
+        throw Exception(responseattempt.body);
+      }
+
+      List responseDataAttempt = json.decode(responseattempt.body);
+      print(responseattempt.body);
+      return responseDataAttempt;
+  }
+
+  Future<void> fetchData() async {
+    try {
+      final responseDataTugas = await apiCallTugas();
+      final responseDataAttempts = await apiCallAttempts();
       setState(() {
-        tugasPembelajaran = TugasPembelajaran.fromJson(responseData);
+        tugasPembelajaran = TugasPembelajaran.fromJson(responseDataTugas);
+        listAttempts = List<Map<String, dynamic>>.from(responseDataAttempts);
       });
     } catch (exc) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -80,6 +99,14 @@ class _SoalDynamicState extends State<SoalDynamic> {
         ),
       );
     }
+  }
+
+  Widget buatDaftarAttempt(context, index) {
+    return ListTile(
+      title: Text("Percobaan pada ke ${index+1}"),
+      subtitle: Text(listAttempts[index]["waktu_selesai"]),
+      trailing: Text((10*listAttempts[index]["nilai"]).toStringAsFixed(2)),
+    );
   }
 
   @override
@@ -94,11 +121,12 @@ class _SoalDynamicState extends State<SoalDynamic> {
             },
           ),
         ),
-        body: Padding(
+        body: Container(
           padding: const EdgeInsets.all(8.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              const SizedBox(height: 20,),
               Text(
                 tugasPembelajaran.judul,
                 style: TextStyle(
@@ -108,35 +136,68 @@ class _SoalDynamicState extends State<SoalDynamic> {
                 textAlign: TextAlign.center,
               ),
               const SizedBox(
-                height: 50,
+                height: 20,
               ),
-              Table(
-                children: [
-                  TableRow(children: [
-                    const Text("Upaya diperbolehkan:"),
-                    Text("${tugasPembelajaran.jumlahAttempt}")
-                  ]),
-                  TableRow(children: [
-                    const Text("Dibuat pada:"),
-                    Text("${tugasPembelajaran.timeCreated}")
-                  ])
-                ],
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal:20.0),
+                child: Table(
+                  children: [
+                    TableRow(children: [
+                      const Text("Upaya diperbolehkan:"),
+                      Text("${tugasPembelajaran.jumlahAttempt}")
+                    ]),
+                    TableRow(children: [
+                      const Text("Dibuat pada:"),
+                      Text("${tugasPembelajaran.timeCreated}")
+                    ])
+                  ],
+                ),
               ),
-              const SizedBox(
-                height: 50,
+              const SizedBox(height: 20,),
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(horizontal:20.0),
+                child: Text(
+                  "Daftar percobaan:",
+                  style: Theme.of(context).textTheme.bodyLarge,
+                ),
+              ),
+              Expanded(
+                child: Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(8.0),
+                  margin: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 20),
+                  decoration: BoxDecoration(
+                    color: Colors.grey[50],
+                    border: Border.all(
+                      color: Colors.blue,
+                      width: 2.0,
+                    ),
+                    borderRadius: BorderRadius.circular(30.0),
+                  ),
+                  child: (listAttempts.isNotEmpty ) ? 
+                    ListView.builder(itemBuilder: buatDaftarAttempt, itemCount: listAttempts.length,):
+                    const Text("  Belum ada attempt")
+                ),
               ),
               TextButton(
-                onPressed: () {
+                onPressed: (tugasPembelajaran.jumlahAttempt > listAttempts.length) ? () {
+                  MengerjakanSoal.init(tugasPembelajaran);
                   Navigator.push(
                       context,
                       MaterialPageRoute(
                           builder: (context) => MengerjakanSoal(
                               tugasPembelajaran: tugasPembelajaran,
-                              noSoal: 0)));
-                },
+                              noSoal: 0
+                          )
+                      )
+                  );
+                }: null,
                 style: ButtonStyle(
-                    backgroundColor:
-                        MaterialStateProperty.all<Color>(Colors.blue)),
+                  backgroundColor: MaterialStateProperty.all<Color>(
+                    (tugasPembelajaran.jumlahAttempt > listAttempts.length) ?  Colors.blue : Colors.grey
+                  ),
+                ),
                 child: Container(
                   padding:
                       const EdgeInsets.symmetric(horizontal: 90, vertical: 10),
@@ -145,7 +206,9 @@ class _SoalDynamicState extends State<SoalDynamic> {
                     style: Theme.of(context).textTheme.labelLarge,
                   ),
                 ),
-              )
+              ),
+              const SizedBox(height: 30,),
+
             ],
           ),
         ));

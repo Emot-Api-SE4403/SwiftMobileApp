@@ -168,7 +168,7 @@ class _TugasPageState extends State<TugasPage>
             onTap: () {
               Navigator.push(context, MaterialPageRoute<void>(
                 builder: (BuildContext context) {
-                  return SoalDynamic(id_video: data[i]['video']['id']);
+                  return SoalDynamic(id_video: data[i]['video']['id'], id_tugas: data[i]['id'],);
                 },
               ));
             },

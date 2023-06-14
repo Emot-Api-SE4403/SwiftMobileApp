@@ -1,15 +1,25 @@
 class TugasPembelajaran {
+  int id;
   String judul;
   int jumlahAttempt;
   List<Soal> daftarSoal;
   DateTime timeCreated;
 
   TugasPembelajaran({
+    required this.id,
     required this.judul,
     required this.jumlahAttempt,
     required this.daftarSoal,
     required this.timeCreated,
   });
+
+  static TugasPembelajaran placeholder = TugasPembelajaran(
+    judul: "Loading...",
+    jumlahAttempt: 0,
+    daftarSoal: List.empty(),
+    timeCreated: DateTime.fromMillisecondsSinceEpoch(0),
+    id: -1
+  );
 
   factory TugasPembelajaran.fromJson(Map<String, dynamic> json) {
     List<Soal> daftarSoal = [];
@@ -17,7 +27,9 @@ class TugasPembelajaran {
       daftarSoal = List<Soal>.from(json['daftar_soal'].map((x) => _parseSoal(x)));
     }
 
+
     return TugasPembelajaran(
+      id: json['id'],
       judul: json['judul'],
       jumlahAttempt: json['jumlah_attempt'],
       daftarSoal: daftarSoal,
