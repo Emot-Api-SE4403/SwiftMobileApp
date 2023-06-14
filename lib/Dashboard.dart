@@ -35,7 +35,7 @@ class _DashboardPageState extends State<DashboardPage> {
   List<Map<String, dynamic>> detailMapel = [
     {
       'nama': 'Kuantitatif',
-      'foto': 'assets\\image\\kuantitatif.jpeg',
+      'foto': 'assets\\image\\Kuantitatif.jpeg',
       'id': 1
     },
     {
