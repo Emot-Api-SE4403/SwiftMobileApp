@@ -1,7 +1,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.swift_elearning">
+    package="id.my.admfirst.swift_elearning">
+    <uses-permission android:name="android.permission.INTERNET"/>
+
    <application
-        android:label="swift elearning"
+        android:label="Swift E-Learning"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

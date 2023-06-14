@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -180,6 +182,7 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 
   void _submitForm() async {
+    try{
     String url = '${dotenv.get("API_URL")}/pelajar/register';
 
     // The body of the request is usually a JSON object
@@ -210,9 +213,12 @@ class _RegisterPageState extends State<RegisterPage> {
       _showMyDialog();
       
     } else {
+      throw HttpException(responseBody['detail']);
+    }
+    } catch (error) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(responseBody['detail']),
+          content: Text(error.toString()),
           backgroundColor: Colors.red,
         ),
       );
